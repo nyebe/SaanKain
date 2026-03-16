@@ -15,10 +15,9 @@ export default function LandingPage() {
     <main className="min-h-screen p-6">
       <div className="mx-auto max-w-3xl">
         <DocHeader
-          title="SaanKain — UI Architecture Plan"
+          title="SaanKain"
           description="Design and UI architecture plan for the SaanKain restaurant discovery app."
           author="Nyebe Creations"
-          lastModified="2026-03-17"
         />
 
         <SearchForm
