@@ -1,16 +1,16 @@
-import * as React from 'react';
+import { useState } from 'react';
 
-import { SearchResult } from '@/types/search';
+import { RestaurantResult } from '@/types/restaurant';
 
-import { getSimulatedResults } from './dataLanding';
+import { loadSearchResults } from './dataLanding';
 
 export default function useLandingPage() {
-  const [message, setMessage] = React.useState<string>('');
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const [results, setResults] = React.useState<SearchResult[]>([]);
+  const [message, setMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [results, setResults] = useState<RestaurantResult[]>([]);
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!message.trim()) {
       setErrorMessage('Please enter a search message.');
       return;
@@ -19,13 +19,18 @@ export default function useLandingPage() {
     setLoading(true);
     setResults([]);
 
-    // Simulate API latency and response (data moved to dataLanding)
-    setTimeout(() => {
+    try {
+      const response = await loadSearchResults(message);
+      if (response.success) {
+        setResults(response.results);
+      } else {
+        setErrorMessage(response.error.message);
+      }
+    } catch {
+      setErrorMessage('Something went wrong. Please try again.');
+    } finally {
       setLoading(false);
-      const simulated = getSimulatedResults(message);
-
-      setResults(simulated);
-    }, 800);
+    }
   }
 
   return { message, setMessage, loading, errorMessage, results, handleSubmit, disabled: loading };

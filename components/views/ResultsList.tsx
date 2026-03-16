@@ -11,7 +11,7 @@ export default function ResultsList({ results }: ResultsListProps) {
   return (
     <div className="grid gap-4">
       {results.map((item) => (
-        <ResultCard key={item.id} item={item} />
+        <ResultCard key={item.fsqId} item={item} />
       ))}
     </div>
   );
