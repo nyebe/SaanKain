@@ -3,6 +3,7 @@
 import SearchForm from '@/components/forms/SearchForm';
 import ErrorState from '@/components/states/ErrorState';
 import LoadingState from '@/components/states/LoadingState';
+import DocHeader from '@/components/ui/DocHeader';
 import ResultsList from '@/components/views/ResultsList';
 
 import useLandingPage from './useLandingPage';
@@ -13,7 +14,11 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen p-6">
       <div className="mx-auto max-w-3xl">
-        <h1 className="text-3xl font-semibold mb-4">SaanKain — Search</h1>
+        <DocHeader
+          title="SaanKain"
+          description="Design and UI architecture plan for the SaanKain restaurant discovery app."
+          author="Nyebe Creations"
+        />
 
         <SearchForm
           message={message}

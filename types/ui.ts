@@ -19,3 +19,10 @@ export interface ResultCardProps {
 export interface ResultsListProps {
     results: RestaurantResult[];
 }
+
+export interface DocHeaderProps {
+    title: string;
+    description?: string;
+    author?: string;
+    lastModified?: string;
+}
