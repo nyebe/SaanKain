@@ -1,0 +1,52 @@
+import {
+  NextRequest,
+  NextResponse,
+} from 'next/server';
+
+import { searchPlaces } from '@/lib/foursquare/searchPlaces';
+import { parseMessage } from '@/lib/parser/parseMessage';
+import { rankResults } from '@/lib/ranking/rankResults';
+import { validateExecuteQuery } from '@/lib/validation/validateExecuteQuery';
+import { ExecuteResponse } from '@/types/api';
+
+export async function GET(request: NextRequest): Promise<NextResponse<ExecuteResponse>> {
+    const { searchParams } = new URL(request.url);
+    const code = searchParams.get('code');
+    const message = searchParams.get('message');
+
+    const validation = validateExecuteQuery(code, message);
+
+    if (!validation.valid) {
+        const httpStatus = validation.error.code === 'UNAUTHORIZED' ? 401 : 400;
+        return NextResponse.json(
+            { success: false, error: validation.error },
+            { status: httpStatus }
+        );
+    }
+
+    const parsed = parseMessage(validation.message);
+
+    try {
+        const results = await searchPlaces(parsed);
+        const ranked = rankResults(results, parsed);
+
+        return NextResponse.json({
+            success: true,
+            message: validation.message,
+            parsed,
+            results: ranked,
+        });
+    } catch (err) {
+        const detail = err instanceof Error ? err.message : 'Unexpected error';
+        return NextResponse.json(
+            {
+                success: false,
+                error: {
+                    code: 'SEARCH_ERROR',
+                    message: detail,
+                },
+            },
+            { status: 500 }
+        );
+    }
+}

@@ -1,8 +1,6 @@
-export interface SearchResult {
-    id: string;
-    name: string;
-    cuisine: string;
-    priceLevel: number;
-    rating: number;
-    distanceMeters?: number;
+export interface ParsedSearch {
+    cuisine?: string | null;
+    locationText?: string | null;
+    priceLevel?: number | null;
+    openNow?: boolean;
 }

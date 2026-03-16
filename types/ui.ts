@@ -1,4 +1,4 @@
-import { SearchResult } from '@/types/search';
+import { RestaurantResult } from '@/types/restaurant';
 
 export interface SearchFormProps {
     message: string;
@@ -13,9 +13,9 @@ export interface ErrorStateProps {
 }
 
 export interface ResultCardProps {
-    item: SearchResult;
+    item: RestaurantResult;
 }
 
 export interface ResultsListProps {
-    results: SearchResult[];
+    results: RestaurantResult[];
 }
