@@ -19,7 +19,7 @@ All API routes live in:
 Required endpoint:
 
 ```
-/app/api/execute/route.ts
+/app/api/v1/execute/route.ts
 ```
 
 ---
@@ -29,13 +29,13 @@ Required endpoint:
 Primary endpoint:
 
 ```
-GET /api/execute
+GET /api/v1/execute
 ```
 
 Example request:
 
 ```
-/api/execute?message=cheap sushi near LA open now&code=pioneerdevai
+/api/v1/execute?message=cheap sushi near LA open now&code=pioneerdevai
 ```
 
 Required parameters:
@@ -354,7 +354,7 @@ API tests must exist.
 Location:
 
 ```
-/tests/api/execute.test.ts
+/tests/api/v1/execute.test.ts
 ```
 
 Required scenarios:

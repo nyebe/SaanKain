@@ -136,7 +136,7 @@ Contains:
 ```
 page.tsx
 layout.tsx
-/api/execute/route.ts
+/api/v1/execute/route.ts
 ```
 
 Rules:
@@ -222,7 +222,7 @@ search.ts
 Responsibilities:
 
 ```
-call /api/execute
+call /api/v1/execute
 handle network requests
 parse API responses
 return typed results
@@ -357,13 +357,14 @@ Validation must occur before parsing.
 Required endpoint:
 
 ```
-GET /api/execute
+GET /api/v1/execute
 ```
 
 Example:
 
 ```
-/api/execute?message=cheap sushi near makati open now&code=pioneerdevai
+// example
+/api/v1/execute?message=cheap sushi near makati open now&code=pioneerdevai
 ```
 
 Flow:

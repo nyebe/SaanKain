@@ -32,7 +32,7 @@ http://localhost:3000
 # Primary Endpoint
 
 ```
-GET /api/execute
+GET /api/v1/execute
 ```
 
 This endpoint processes natural language restaurant queries.
@@ -49,7 +49,7 @@ This endpoint processes natural language restaurant queries.
 Example request:
 
 ```
-/api/execute?message=cheap sushi near downtown LA open now&code=pioneerdevai
+/api/v1/execute?message=cheap sushi near downtown LA open now&code=pioneerdevai
 ```
 
 ---
@@ -57,7 +57,7 @@ Example request:
 # Request Example
 
 ```
-GET /api/execute?message=Find%20me%20a%20cheap%20sushi%20restaurant%20in%20downtown%20Los%20Angeles%20that%20is%20open%20now&code=pioneerdevai
+GET /api/v1/execute?message=Find%20me%20a%20cheap%20sushi%20restaurant%20in%20downtown%20Los%20Angeles%20that%20is%20open%20now&code=pioneerdevai
 ```
 
 ---

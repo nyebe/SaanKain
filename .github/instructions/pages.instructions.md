@@ -141,7 +141,7 @@ error mapping
 This layer communicates with:
 
 ```
-/api/execute
+/api/v1/execute
 ```
 
 Data layer must not:
@@ -240,7 +240,7 @@ parsed query
 Responsible for:
 
 ```
-calling /api/execute
+calling /api/v1/execute
 passing message parameter
 returning normalized response
 handling network errors
