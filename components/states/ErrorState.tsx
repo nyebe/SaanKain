@@ -1,12 +1,7 @@
 "use client"
 
-import React from "react";
-import { Button } from "@/components/ui/button";
-
-interface ErrorStateProps {
-  message: string;
-  onRetry?: () => void;
-}
+import { Button } from '@/components/ui/button';
+import { ErrorStateProps } from '@/types/ui';
 
 export default function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (

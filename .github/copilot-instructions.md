@@ -65,6 +65,9 @@ Use types defined in:
 
 Never invent duplicate types.
 
+Do not declare interfaces or types inside component files (under `/components`) except for the primitive UI internals in `/components/ui` which may define narrow, presentation-focused types.
+Do not declare interfaces or types inside page files (`/app`) or API route files (`/app/api` or `/pages/api`). All shared types and interfaces must live under `/types` and be imported via root imports (e.g., `@/types/search`).
+
 ---
 
 ## Architecture Boundaries
@@ -149,6 +152,23 @@ API routes orchestrate modules only.
 
 ---
 
+# Page File Structure
+
+Every page under `/app` must follow a strict 3-file structure colocated in the page folder:
+
+- `page.tsx` — UI-only React component (no business logic or types/interfaces)
+- `use<PageName>.ts` — client or server hook containing page-specific state and logic
+- `data<PageName>.ts` — data helpers / adapters for the page (calls services, transforms data)
+
+Files must live together in the same folder for the page (e.g. `app/(landing)/page.tsx`, `app/(landing)/useLanding.ts`, `app/(landing)/dataLanding.ts`).
+
+Keep `page.tsx` focused on rendering and delegating to the hook; do not place business logic, parsing, or types inside `page.tsx`.
+
+If a page needs shared types, import them from `/types` (do not declare types or interfaces inside `page.tsx`, `use*` files may reference shared types but should not declare new exported interfaces that belong in `/types`).
+
+
+---
+
 # Components
 
 Location:
@@ -202,6 +222,11 @@ store results
 ```
 
 Hooks may call **services**, but not backend modules.
+
+Notes:
+- The `/hooks` directory is reserved for reusable, shared hooks only (e.g., `useIsMobile`, `useAuth`).
+- Page-specific hooks must be colocated with the page using the 3-file structure (`use<PageName>.ts` inside the page folder under `/app`).
+- Do not place page-specific logic or types in `/hooks` — keep those in the page folder.
 
 ---
 
@@ -413,6 +438,8 @@ Always use root imports:
 @/components
 ```
 
+Always import shared types and interfaces from `@/types` (do not declare types inline in components, pages, or API routes).
+
 Avoid deep relative imports.
 
 Incorrect:
@@ -515,6 +542,22 @@ maintainability
 ```
 
 Optimization and advanced features come later.
+
+---
+
+# Naming Conventions
+
+Follow clear, descriptive naming across the codebase to improve readability and maintainability. Enforce these rules in code reviews and linters.
+
+- **Descriptive names:** Prefer domain-specific, descriptive names for variables, functions, types, files, and modules (e.g., `searchQuery`, `fetchResults`, `SearchResult`, `landing.data.ts`).
+- **Avoid short/ambiguous names:** Do **not** use single-letter or 1–3 character names (e.g., `e`, `i`, `x`) except for simple loop indices in tiny, local scopes. Avoid generic names like `data`, `file`, `unit`, or `item` that reveal no intent.
+- **No cryptic acronyms:** Avoid unclear acronyms (e.g., `svc`, `usr`, `cfg`) unless the acronym is widely known in the project domain and documented.
+- **Event handler parameters:** Do not use `e` for event parameters. Use `event`, `evt`, or a domain-specific name like `formEvent` or `clickEvent` to show intent.
+- **Functions:** Use verb-based names for actions (e.g., `validateInput`, `loadSearchResults`).
+- **Types / Interfaces:** Use `PascalCase` and expressive names for types and interfaces (e.g., `SearchResult`, `LandingPageState`).
+- **Files:** Use descriptive filenames; avoid ambiguous names like `utils.ts` or `data.ts`. Prefer `search.service.ts`, `landing.data.ts`, or `resultsCard.tsx`.
+
+If you want, I can add an ESLint rule set and examples to enforce several of these conventions automatically.
 
 ---
 

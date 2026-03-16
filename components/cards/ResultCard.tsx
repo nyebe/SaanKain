@@ -1,20 +1,7 @@
 "use client"
 
-import React from "react";
-import { Card } from "@/components/ui/card";
-
-interface ResultItem {
-  id: string;
-  name: string;
-  cuisine: string;
-  priceLevel: number;
-  rating: number;
-  distanceMeters?: number;
-}
-
-interface ResultCardProps {
-  item: ResultItem;
-}
+import { Card } from '@/components/ui/card';
+import { ResultCardProps } from '@/types/ui';
 
 export default function ResultCard({ item }: ResultCardProps) {
   return (

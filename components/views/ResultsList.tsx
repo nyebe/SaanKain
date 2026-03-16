@@ -1,20 +1,7 @@
 "use client"
 
-import React from "react";
-import ResultCard from "@/components/cards/ResultCard";
-
-interface SearchResultItem {
-  id: string;
-  name: string;
-  cuisine: string;
-  priceLevel: number;
-  rating: number;
-  distanceMeters?: number;
-}
-
-interface ResultsListProps {
-  results: SearchResultItem[];
-}
+import ResultCard from '@/components/cards/ResultCard';
+import { ResultsListProps } from '@/types/ui';
 
 export default function ResultsList({ results }: ResultsListProps) {
   if (!results || results.length === 0) {

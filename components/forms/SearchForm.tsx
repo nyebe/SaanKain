@@ -1,21 +1,16 @@
 "use client"
 
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { ChangeEvent } from 'react';
 
-interface SearchFormProps {
-  message: string;
-  onChange: (v: string) => void;
-  onSubmit: () => void;
-  disabled?: boolean;
-}
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { SearchFormProps } from '@/types/ui';
 
 export default function SearchForm({ message, onChange, onSubmit, disabled = false }: SearchFormProps) {
   return (
     <form
-      onSubmit={(e) => {
-        e.preventDefault();
+      onSubmit={(formEvent) => {
+        formEvent.preventDefault();
         onSubmit();
       }}
       className="space-y-3"
@@ -24,7 +19,7 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
         <span className="text-sm font-medium">What are you looking for?</span>
         <Textarea
           value={message}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
+          onChange={(changeEvent: ChangeEvent<HTMLTextAreaElement>) => onChange(changeEvent.target.value)}
           placeholder="e.g. cheap sushi near makati open now"
           rows={3}
           maxLength={200}
