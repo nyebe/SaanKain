@@ -59,9 +59,15 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          <NavBar />
-          {children}
-          <Footer />
+          <div className="min-h-screen flex flex-col">
+            <NavBar />
+
+            <div className="flex-1 overflow-auto min-h-0">
+              {children}
+            </div>
+
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>
