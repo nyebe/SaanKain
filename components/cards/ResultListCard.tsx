@@ -14,7 +14,7 @@ function formatPrice(price: number | null | undefined): string {
   return '$'.repeat(Math.max(1, price));
 }
 
-export default function ResultCard({ item }: ResultCardProps) {
+export default function ResultListCard({ item }: ResultCardProps) {
   const openLabel = item.isOpen === true ? 'Open now' : item.isOpen === false ? 'Closed' : null;
 
   return (

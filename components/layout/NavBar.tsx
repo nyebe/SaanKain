@@ -33,12 +33,12 @@ export default function NavBar() {
                     <div className="sm:hidden">
                         <Sheet>
                             <SheetTrigger>
-                                <button
+                                <p
                                     aria-label="Open menu"
                                     className="p-2 rounded-md bg-white/3"
                                 >
                                     Menu
-                                </button>
+                                </p>
                             </SheetTrigger>
 
                             <SheetContent side="bottom">
