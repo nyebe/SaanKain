@@ -1,15 +1,21 @@
 "use client"
 
+import ResultGalleryCard from '@/components/cards/ResultGalleryCard';
 import ResultListCard from '@/components/cards/ResultListCard';
-import { ResultsListProps } from '@/types/ui';
+import {
+  ResultsListProps,
+  ViewMode,
+} from '@/types/ui';
 
-export default function ResultsList({ results }: ResultsListProps) {
+export default function ResultsList({ results, view = 'list' }: ResultsListProps & { view?: ViewMode }) {
   if (!results || results.length === 0) {
     return <div className="text-sm text-muted-foreground">No results yet. Try a different query.</div>;
   }
 
+  const containerClass = view === 'gallery' ? 'flex flex-wrap gap-4' : 'flex flex-col gap-4'
+
   return (
-    <div className="grid gap-4">
+    <div className={containerClass}>
       {results.map((item) => {
         const minimal = {
           fsq_place_id: (item as any).fsqId || (item as any).fsq_place_id || String((item as any).id || ''),
@@ -23,6 +29,10 @@ export default function ResultsList({ results }: ResultsListProps) {
           distance: item.distance ?? null,
           date_closed: null,
         };
+
+        if (view === 'gallery') {
+          return <ResultGalleryCard key={minimal.fsq_place_id} item={minimal} />;
+        }
 
         return <ResultListCard key={minimal.fsq_place_id} item={minimal} />;
       })}

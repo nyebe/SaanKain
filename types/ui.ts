@@ -34,3 +34,11 @@ export interface ColorSwatch {
     textClass: string;
     description: string;
 }
+
+export type ViewMode = 'list' | 'gallery'
+
+export interface ViewModeToggleProps {
+    view: ViewMode
+    onChange: (v: ViewMode) => void
+    className?: string
+}
