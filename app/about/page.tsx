@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
-import DocHeader from '@/components/ui/DocHeader';
-import SectionCard from '@/components/cards/SectionCard';
-import StepFlow from '@/components/views/StepFlow';
 import SignalBadge from '@/components/badges/SignalBadge';
+import SectionCard from '@/components/cards/SectionCard';
 import TechnologyCard from '@/components/cards/TechnologyCard';
+import DocHeader from '@/components/ui/DocHeader';
+import StepFlow from '@/components/views/StepFlow';
 
 export default function AboutPage() {
     return (
@@ -44,7 +44,7 @@ export default function AboutPage() {
 
                         <div className="mt-4">
                             <div className="bg-gray-900 text-white p-4 rounded-md font-mono text-sm">
-{`{
+                                {`{
   cuisine: "sushi",
   priceLevel: 1,
   location: "makati",
