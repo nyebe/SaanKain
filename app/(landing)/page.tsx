@@ -1,9 +1,9 @@
 "use client"
 
 import SearchForm from '@/components/forms/SearchForm';
+import DocHeader from '@/components/layout/DocHeader';
 import ErrorState from '@/components/states/ErrorState';
 import LoadingState from '@/components/states/LoadingState';
-import DocHeader from '@/components/ui/DocHeader';
 import ResultsList from '@/components/views/ResultsList';
 
 import useLandingPage from './useLandingPage';

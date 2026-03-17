@@ -26,3 +26,19 @@ export interface DocHeaderProps {
     author?: string;
     lastModified?: string;
 }
+
+export interface ColorSwatch {
+    name: string;
+    hex: string;
+    bgClass: string;
+    textClass: string;
+    description: string;
+}
+
+export type ViewMode = 'list' | 'gallery'
+
+export interface ViewModeToggleProps {
+    view: ViewMode
+    onChange: (v: ViewMode) => void
+    className?: string
+}
