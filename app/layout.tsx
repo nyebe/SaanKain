@@ -8,6 +8,7 @@ import {
 
 import Footer from '@/components/layout/Footer';
 import NavBar from '@/components/layout/NavBar';
+import PageContainer from '@/components/layout/PageContainer';
 import Providers from '@/providers/providers';
 
 const geistSans = Geist({
@@ -62,9 +63,9 @@ export default function RootLayout({
           <div className="min-h-screen flex flex-col">
             <NavBar />
 
-            <div className="flex-1 overflow-auto min-h-0">
+            <PageContainer>
               {children}
-            </div>
+            </PageContainer>
 
             <Footer />
           </div>
