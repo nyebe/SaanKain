@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 import Link from 'next/link';
 
+import ThemeToggle from './ThemeToggle';
+
 export default function NavBar() {
     const [open, setOpen] = useState(false)
 
@@ -30,7 +32,8 @@ export default function NavBar() {
                         </button>
                     </div>
 
-                    <div className="hidden sm:flex">
+                    <div className="hidden sm:flex items-center gap-2">
+                        <ThemeToggle />
                         <Link href="/" className="px-3 py-1 rounded-md bg-primary text-primary-foreground text-sm">Search</Link>
                     </div>
                 </div>
