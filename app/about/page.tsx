@@ -3,7 +3,7 @@ import Link from 'next/link';
 import SignalBadge from '@/components/badges/SignalBadge';
 import SectionCard from '@/components/cards/SectionCard';
 import TechnologyCard from '@/components/cards/TechnologyCard';
-import DocHeader from '@/components/ui/DocHeader';
+import DocHeader from '@/components/layout/DocHeader';
 import StepFlow from '@/components/views/StepFlow';
 
 export default function AboutPage() {

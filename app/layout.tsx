@@ -6,8 +6,8 @@ import {
   Geist_Mono,
 } from 'next/font/google';
 
-import Footer from '@/components/ui/Footer';
-import NavBar from '@/components/ui/NavBar';
+import Footer from '@/components/layout/Footer';
+import NavBar from '@/components/layout/NavBar';
 import Providers from '@/providers/providers';
 
 const geistSans = Geist({
