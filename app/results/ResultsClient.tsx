@@ -6,18 +6,24 @@ import {
     useState,
 } from 'react';
 
+import { MapPin } from 'lucide-react';
+
 import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
 import SearchForm from '@/components/forms/SearchForm';
 import SearchHistorySheet from '@/components/sheets/SearchHistorySheet';
 import ErrorState from '@/components/states/ErrorState';
 import LoadingState from '@/components/states/LoadingState';
+import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import ResultsList from '@/components/views/ResultsList';
+import useGeoLocation from '@/hooks/useGeoLocation';
 import { ViewMode } from '@/types/ui';
 
 import useResults from './useResults';
 
 export default function ResultsClient() {
+    const { useLocation, toggleLocation, coords, locationError, resolving } = useGeoLocation();
+
     const {
         message,
         setMessage,
@@ -31,7 +37,7 @@ export default function ResultsClient() {
         removeEntry,
         clearHistory,
         selectHistoryEntry,
-    } = useResults();
+    } = useResults(coords);
     const [view, setView] = useState<ViewMode>('list');
     const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -64,6 +70,22 @@ export default function ResultsClient() {
                     onRemove={removeEntry}
                     onClear={clearHistory}
                 />
+                <Button
+                    type="button"
+                    variant={useLocation ? 'default' : 'outline'}
+                    size="icon"
+                    onClick={toggleLocation}
+                    disabled={resolving}
+                    title={useLocation ? 'Location active — click to disable' : 'Use my location'}
+                    aria-label="Toggle location search"
+                    className="shrink-0"
+                >
+                    {resolving ? (
+                        <Spinner className="size-4" />
+                    ) : (
+                        <MapPin className="size-4" />
+                    )}
+                </Button>
                 <div className="flex items-start gap-2">
                     <div className="flex-1">
                         <SearchForm
@@ -74,6 +96,10 @@ export default function ResultsClient() {
                         />
                     </div>
                 </div>
+
+                {locationError && (
+                    <p className="mt-2 text-xs text-destructive">{locationError}</p>
+                )}
 
                 <div className="mt-6">
                     <div className="flex items-center justify-between gap-4 mb-4">
@@ -109,3 +135,4 @@ export default function ResultsClient() {
         </main>
     );
 }
+

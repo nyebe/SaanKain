@@ -2,11 +2,15 @@ import axios from 'axios';
 
 import { ExecuteResponse } from '@/types/api';
 
-export async function fetchSearchResults(message: string): Promise<ExecuteResponse> {
+export async function fetchSearchResults(message: string, ll?: string): Promise<ExecuteResponse> {
     const params = new URLSearchParams({
         message,
         code: 'pioneerdevai',
     });
+
+    if (ll) {
+        params.set('ll', ll);
+    }
 
     try {
         const response = await axios.get<ExecuteResponse>(`/api/v1/execute?${params.toString()}`);

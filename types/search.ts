@@ -1,3 +1,8 @@
+export interface GeoCoords {
+    lat: number;
+    lng: number;
+}
+
 export interface ParsedSearch {
     cuisine?: string | null;
     locationText?: string | null;

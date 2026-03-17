@@ -2,6 +2,7 @@
 
 import {
     useEffect,
+    useRef,
     useState,
 } from 'react';
 
@@ -12,10 +13,11 @@ import {
 
 import useSearchHistory from '@/hooks/useSearchHistory';
 import { RestaurantResult } from '@/types/restaurant';
+import { GeoCoords } from '@/types/search';
 
 import { loadResults } from './dataResults';
 
-export default function useResults() {
+export default function useResults(coords: GeoCoords | null = null) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const initial = searchParams?.get('message') ?? '';
@@ -29,23 +31,27 @@ export default function useResults() {
     const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
 
     const { history, addEntry, removeEntry, clearHistory } = useSearchHistory();
+    const lastAddedQuery = useRef<string>('');
 
     useEffect(() => {
         const msg = searchParams?.get('message');
         if (!msg) return;
-        const query = msg; // capture as a plain string for async usage
+        const query = msg;
 
         let mounted = true;
 
-        addEntry(query);
+        if (query !== lastAddedQuery.current) {
+            addEntry(query);
+            lastAddedQuery.current = query;
+        }
 
-        async function fetch() {
+        async function runFetch() {
             setLoading(true);
             setErrorMessage(null);
             setResults([]);
             setVisibleCount(PAGE_SIZE);
             try {
-                const response = await loadResults(query);
+                const response = await loadResults(query, coords);
                 if (!mounted) return;
                 if (response.success) {
                     setResults(response.results);
@@ -61,15 +67,14 @@ export default function useResults() {
             }
         }
 
-        fetch();
+        runFetch();
 
         return () => {
             mounted = false;
         };
-    }, [searchParams]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams, coords]);
 
-    // SearchForm also performs navigation; this submit is provided for parity but
-    // the SearchForm will push the URL which triggers the effect above.
     async function handleSubmit() {
         // no-op: navigation handled by SearchForm
     }
@@ -102,3 +107,4 @@ export default function useResults() {
         selectHistoryEntry,
     };
 }
+
