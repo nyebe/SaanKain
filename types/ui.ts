@@ -26,3 +26,11 @@ export interface DocHeaderProps {
     author?: string;
     lastModified?: string;
 }
+
+export interface ColorSwatch {
+    name: string;
+    hex: string;
+    bgClass: string;
+    textClass: string;
+    description: string;
+}

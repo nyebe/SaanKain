@@ -10,9 +10,22 @@ export default function ResultsList({ results }: ResultsListProps) {
 
   return (
     <div className="grid gap-4">
-      {results.map((item) => (
-        <ResultListCard key={item.fsqId} item={item} />
-      ))}
+      {results.map((item) => {
+        const minimal = {
+          fsq_place_id: (item as any).fsqId || (item as any).fsq_place_id || String((item as any).id || ''),
+          name: item.name,
+          location: {
+            address: item.address ?? null,
+            locality: item.locality ?? null,
+            region: item.region ?? null,
+          },
+          categories: item.category ? [{ name: item.category }] : null,
+          distance: item.distance ?? null,
+          date_closed: null,
+        };
+
+        return <ResultListCard key={minimal.fsq_place_id} item={minimal} />;
+      })}
     </div>
   );
 }
