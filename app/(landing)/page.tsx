@@ -1,38 +1,33 @@
 "use client"
 
+import Image from 'next/image';
+
 import SearchForm from '@/components/forms/SearchForm';
-import DocHeader from '@/components/layout/DocHeader';
-import ErrorState from '@/components/states/ErrorState';
-import LoadingState from '@/components/states/LoadingState';
-import ResultsList from '@/components/views/ResultsList';
 
 import useLandingPage from './useLandingPage';
 
 export default function LandingPage() {
-  const { message, setMessage, loading, errorMessage, results, handleSubmit } = useLandingPage();
+  const { message, setMessage, currentTip } = useLandingPage();
 
   return (
-    <main className="min-h-screen p-6">
-      <div className="mx-auto max-w-3xl">
-        <DocHeader
-          title="SaanKain"
-          description="Design and UI architecture plan for the SaanKain restaurant discovery app."
-          author="Nyebe Creations"
-        />
+    <div className="flex-1 min-h-0 flex items-center justify-center p-6">
+      <div className="mx-auto max-w-3xl w-full flex items-center justify-center">
+        <div className="w-full flex flex-col">
+          <div className="h-52 aspect-square mb-4 relative self-center">
+            <Image src="/app-logo/512x512.png" alt="SaanKain" fill />
+          </div>
+          <div className="flex items-center gap-4 mb-6 self-center">
+            <div className="text-sm text-muted-foreground">{currentTip}</div>
+          </div>
 
-        <SearchForm
-          message={message}
-          onChange={setMessage}
-          onSubmit={handleSubmit}
-          disabled={loading}
-        />
-
-        <div className="mt-6">
-          {loading && <LoadingState />}
-          {errorMessage && <ErrorState message={errorMessage} onRetry={handleSubmit} />}
-          {!loading && !errorMessage && <ResultsList results={results} />}
+          <SearchForm
+            message={message}
+            onChange={setMessage}
+            onSubmit={() => { }}
+            disabled={false}
+          />
         </div>
       </div>
-    </main>
+    </div>
   );
 }
