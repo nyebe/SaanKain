@@ -20,10 +20,13 @@ export default function useResults() {
     const router = useRouter();
     const initial = searchParams?.get('message') ?? '';
 
+    const PAGE_SIZE = 10;
+
     const [message, setMessage] = useState<string>(initial);
     const [loading, setLoading] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [results, setResults] = useState<RestaurantResult[]>([]);
+    const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
 
     const { history, addEntry, removeEntry, clearHistory } = useSearchHistory();
 
@@ -40,6 +43,7 @@ export default function useResults() {
             setLoading(true);
             setErrorMessage(null);
             setResults([]);
+            setVisibleCount(PAGE_SIZE);
             try {
                 const response = await loadResults(query);
                 if (!mounted) return;
@@ -75,12 +79,22 @@ export default function useResults() {
         router.push(`/results?message=${encodeURIComponent(query)}`);
     }
 
+    const visibleResults = results.slice(0, visibleCount);
+    const hasMore = visibleCount < results.length;
+
+    function loadMore() {
+        setVisibleCount((prev) => prev + PAGE_SIZE);
+    }
+
     return {
         message,
         setMessage,
         loading,
         errorMessage,
         results,
+        visibleResults,
+        hasMore,
+        loadMore,
         handleSubmit,
         history,
         removeEntry,
