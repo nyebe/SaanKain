@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { DocHeaderProps } from '@/types/ui';
 
 export default function DocHeader({ title, description, author, lastModified }: DocHeaderProps) {
