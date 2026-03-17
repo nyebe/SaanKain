@@ -8,7 +8,7 @@ import StepFlow from '@/components/views/StepFlow';
 
 export default function AboutPage() {
     return (
-        <main className="min-h-screen p-6">
+        <main className="p-6">
             <div className="mx-auto max-w-5xl">
                 <DocHeader
                     title="About SaanKain"

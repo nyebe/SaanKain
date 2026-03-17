@@ -1,4 +1,14 @@
 import { RestaurantResult } from '@/types/restaurant';
+import {
+    BookmarkedRestaurant,
+    SearchHistoryEntry,
+} from '@/types/search';
+
+export interface RestaurantLocationModalProps {
+    restaurant: RestaurantResult | null;
+    open: boolean;
+    onClose: () => void;
+}
 
 export interface SearchFormProps {
     message: string;
@@ -18,6 +28,9 @@ export interface ResultCardProps {
 
 export interface ResultsListProps {
     results: RestaurantResult[];
+    onSelect?: (item: RestaurantResult) => void;
+    isBookmarked?: (fsqId: string) => boolean;
+    onBookmark?: (item: RestaurantResult) => void;
 }
 
 export interface DocHeaderProps {
@@ -41,4 +54,18 @@ export interface ViewModeToggleProps {
     view: ViewMode
     onChange: (v: ViewMode) => void
     className?: string
+}
+
+export interface SearchHistorySheetProps {
+    history: SearchHistoryEntry[];
+    onSelect: (query: string) => void;
+    onRemove: (query: string) => void;
+    onClear: () => void;
+}
+
+export interface BookmarksSheetProps {
+    bookmarks: BookmarkedRestaurant[];
+    onSelect: (restaurant: BookmarkedRestaurant) => void;
+    onRemove: (fsqId: string) => void;
+    onClear: () => void;
 }

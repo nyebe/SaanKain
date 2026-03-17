@@ -1,9 +1,23 @@
 "use client"
 
+import { HeartIcon } from 'lucide-react';
+
 import { Card } from '@/components/ui/card';
 import { FoursquarePlace } from '@/types/restaurant';
 
-export default function ResultGalleryCard({ item, className }: { item: FoursquarePlace; className?: string }) {
+export default function ResultGalleryCard({
+    item,
+    className,
+    onClick,
+    isBookmarked = false,
+    onBookmark,
+}: {
+    item: FoursquarePlace;
+    className?: string;
+    onClick?: () => void;
+    isBookmarked?: boolean;
+    onBookmark?: () => void;
+}) {
     const category = item.categories && item.categories.length ? item.categories[0].name : null;
     const locationText = [item.location?.locality, item.location?.address].filter(Boolean).join(' · ');
     const distanceText = item.distance == null ? null : item.distance < 1000 ? `${item.distance} m` : `${(item.distance / 1000).toFixed(1)} km`;
@@ -11,7 +25,19 @@ export default function ResultGalleryCard({ item, className }: { item: Foursquar
     const avatarUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${seed}`;
 
     return (
-        <Card className={`overflow-hidden rounded-lg w-43 lg:w-60 ${className ?? ''}`}>
+        <Card className={`overflow-hidden rounded-lg w-43 lg:w-60 relative ${onClick ? 'cursor-pointer transition-colors hover:bg-muted/50' : ''} ${className ?? ''}`} onClick={onClick}>
+            {onBookmark && (
+                <button
+                    onClick={(evt) => { evt.stopPropagation(); onBookmark(); }}
+                    className="absolute top-2 right-2 z-10 text-muted-foreground hover:text-rose-500 transition-colors"
+                    title={isBookmarked ? 'Remove bookmark' : 'Save restaurant'}
+                    aria-label={isBookmarked ? 'Remove bookmark' : 'Save restaurant'}
+                >
+                    <HeartIcon
+                        className={`size-4 ${isBookmarked ? 'fill-rose-500 text-rose-500' : ''}`}
+                    />
+                </button>
+            )}
             <div className="flex flex-col">
                 <div className="w-full bg-muted/10 h-32 lg:h-48 shrink-0 overflow-hidden">
                     <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">

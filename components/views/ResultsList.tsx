@@ -7,7 +7,7 @@ import {
   ViewMode,
 } from '@/types/ui';
 
-export default function ResultsList({ results, view = 'list' }: ResultsListProps & { view?: ViewMode }) {
+export default function ResultsList({ results, view = 'list', onSelect, isBookmarked, onBookmark }: ResultsListProps & { view?: ViewMode }) {
   if (!results || results.length === 0) {
     return <div className="text-sm text-muted-foreground">No results yet. Try a different query.</div>;
   }
@@ -31,10 +31,22 @@ export default function ResultsList({ results, view = 'list' }: ResultsListProps
         };
 
         if (view === 'gallery') {
-          return <ResultGalleryCard key={minimal.fsq_place_id} item={minimal} />;
+          return <ResultGalleryCard
+            key={minimal.fsq_place_id}
+            item={minimal}
+            onClick={() => onSelect?.(item)}
+            isBookmarked={isBookmarked?.(minimal.fsq_place_id)}
+            onBookmark={onBookmark ? () => onBookmark(item) : undefined}
+          />;
         }
 
-        return <ResultListCard key={minimal.fsq_place_id} item={minimal} />;
+        return <ResultListCard
+          key={minimal.fsq_place_id}
+          item={minimal}
+          onClick={() => onSelect?.(item)}
+          isBookmarked={isBookmarked?.(minimal.fsq_place_id)}
+          onBookmark={onBookmark ? () => onBookmark(item) : undefined}
+        />;
       })}
     </div>
   );
