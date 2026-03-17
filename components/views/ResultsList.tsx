@@ -12,7 +12,7 @@ export default function ResultsList({ results, view = 'list' }: ResultsListProps
     return <div className="text-sm text-muted-foreground">No results yet. Try a different query.</div>;
   }
 
-  const containerClass = view === 'gallery' ? 'flex flex-wrap gap-4' : 'flex flex-col gap-4'
+  const containerClass = view === 'gallery' ? 'flex justify-center flex-wrap gap-4' : 'flex flex-col gap-4'
 
   return (
     <div className={containerClass}>

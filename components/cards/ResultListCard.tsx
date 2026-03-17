@@ -19,7 +19,7 @@ export default function ResultListCard({ item }: { item: FoursquarePlace }) {
   return (
     <Card className="p-3">
       <div className="flex items-start gap-3">
-        <img src={avatarUrl} alt={item.name} className="w-12 h-12 rounded-md flex-shrink-0 bg-muted/10" />
+        <img src={avatarUrl} alt={item.name} className="w-12 h-12 rounded-md shrink-0 bg-muted/10" />
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 justify-between w-full">

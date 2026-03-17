@@ -11,9 +11,9 @@ export default function ResultGalleryCard({ item, className }: { item: Foursquar
     const avatarUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${seed}`;
 
     return (
-        <Card className={`overflow-hidden rounded-lg w-60 ${className ?? ''}`}>
+        <Card className={`overflow-hidden rounded-lg w-43 lg:w-60 ${className ?? ''}`}>
             <div className="flex flex-col">
-                <div className="w-full bg-muted/10 h-44 sm:h-48 shrink-0 overflow-hidden">
+                <div className="w-full bg-muted/10 h-32 lg:h-48 shrink-0 overflow-hidden">
                     <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
                         <img src={avatarUrl} alt={item.name} className="w-10 h-10 rounded-md bg-muted/10 shrink-0" />
                     </div>
