@@ -26,6 +26,7 @@ AI-assisted development
 ```text
 /
 ├── app
+├── providers
 ├── components
 ├── hooks
 ├── services
