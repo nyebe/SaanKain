@@ -22,20 +22,24 @@ export default function ResultListCard({ item }: { item: FoursquarePlace }) {
         <img src={avatarUrl} alt={item.name} className="w-12 h-12 rounded-md flex-shrink-0 bg-muted/10" />
 
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-semibold truncate">{item.name}</h3>
+          <div className="flex items-center gap-2 justify-between w-full">
+            <h3 className="text-base font-semibold truncate">{item.name}</h3>
+            {category && (
+              <div className="text-sm text-muted-foreground">{category}</div>
+            )}
+          </div>
 
-          {category && (
-            <div className="text-sm text-muted-foreground">{category}</div>
-          )}
+          <div className="flex items-center gap-2 justify-between w-full">
 
-          {locationText && (
-            <div className="text-xs text-muted-foreground mt-1 truncate">{locationText}</div>
-          )}
+            {locationText && (
+              <div className="text-xs text-muted-foreground mt-1 truncate">{locationText}</div>
+            )}
 
-          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-            {closed ? <span className="text-red-500">Closed</span> : <span className="text-green-600">Open</span>}
-            <span>·</span>
-            <span>{formatDistance(item.distance)}</span>
+            <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+              {closed ? <span className="text-red-500">Closed</span> : <span className="text-green-600">Open</span>}
+              <span>·</span>
+              <span>{formatDistance(item.distance)}</span>
+            </div>
           </div>
         </div>
       </div>
