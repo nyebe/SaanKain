@@ -9,7 +9,7 @@ function formatDistance(meters: number | null | undefined): string {
   return `${(meters / 1000).toFixed(1)} km`;
 }
 
-export default function ResultListCard({ item }: { item: FoursquarePlace }) {
+export default function ResultListCard({ item, onClick }: { item: FoursquarePlace; onClick?: () => void }) {
   const category = item.categories && item.categories.length ? item.categories[0].name : null;
   const locationText = [item.location?.address, item.location?.locality, item.location?.region].filter(Boolean).join(', ');
   const closed = Boolean(item.date_closed);
@@ -17,7 +17,7 @@ export default function ResultListCard({ item }: { item: FoursquarePlace }) {
   const avatarUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${seed}`;
 
   return (
-    <Card className="p-3">
+    <Card className={`p-3 ${onClick ? 'cursor-pointer transition-colors hover:bg-muted/50' : ''}`} onClick={onClick}>
       <div className="flex items-start gap-3">
         <img src={avatarUrl} alt={item.name} className="w-12 h-12 rounded-md shrink-0 bg-muted/10" />
 

@@ -10,6 +10,8 @@ import { MapPin } from 'lucide-react';
 
 import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
 import SearchForm from '@/components/forms/SearchForm';
+import RestaurantLocationModal
+    from '@/components/modals/RestaurantLocationModal';
 import SearchHistorySheet from '@/components/sheets/SearchHistorySheet';
 import ErrorState from '@/components/states/ErrorState';
 import LoadingState from '@/components/states/LoadingState';
@@ -17,12 +19,14 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import ResultsList from '@/components/views/ResultsList';
 import useGeoLocation from '@/hooks/useGeoLocation';
+import { RestaurantResult } from '@/types/restaurant';
 import { ViewMode } from '@/types/ui';
 
 import useResults from './useResults';
 
 export default function ResultsClient() {
     const { useLocation, toggleLocation, coords, locationError, resolving } = useGeoLocation();
+    const [selectedRestaurant, setSelectedRestaurant] = useState<RestaurantResult | null>(null);
 
     const {
         message,
@@ -64,29 +68,36 @@ export default function ResultsClient() {
     return (
         <main className="p-6">
             <div className="mx-auto max-w-3xl">
-                <SearchHistorySheet
-                    history={history}
-                    onSelect={selectHistoryEntry}
-                    onRemove={removeEntry}
-                    onClear={clearHistory}
-                />
-                <Button
-                    type="button"
-                    variant={useLocation ? 'default' : 'outline'}
-                    size="icon"
-                    onClick={toggleLocation}
-                    disabled={resolving}
-                    title={useLocation ? 'Location active — click to disable' : 'Use my location'}
-                    aria-label="Toggle location search"
-                    className="shrink-0"
-                >
-                    {resolving ? (
-                        <Spinner className="size-4" />
-                    ) : (
-                        <MapPin className="size-4" />
+                <div className="flex items-center mb-6">
+                    <SearchHistorySheet
+                        history={history}
+                        onSelect={selectHistoryEntry}
+                        onRemove={removeEntry}
+                        onClear={clearHistory}
+                    />
+                    <Button
+                        type="button"
+                        variant={useLocation ? 'default' : 'outline'}
+                        size="icon"
+                        onClick={toggleLocation}
+                        disabled={resolving}
+                        title={useLocation ? 'Location active — click to disable' : 'Use my location'}
+                        aria-label="Toggle location search"
+                        className="shrink-0"
+                    >
+                        {resolving ? (
+                            <Spinner className="size-4" />
+                        ) : (
+                            <MapPin className="size-4" />
+                        )}
+                    </Button>
+                    {useLocation && coords && (
+                        <span className="shrink-0 tabular-nums text-xs text-muted-foreground ml-2">
+                            {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
+                        </span>
                     )}
-                </Button>
-                <div className="flex items-start gap-2">
+                </div>
+                <div className="flex items-center gap-2">
                     <div className="flex-1">
                         <SearchForm
                             message={message}
@@ -112,7 +123,7 @@ export default function ResultsClient() {
 
                     {showResults && (
                         <>
-                            <ResultsList results={visibleResults} view={view} />
+                            <ResultsList results={visibleResults} view={view} onSelect={setSelectedRestaurant} />
 
                             {/* Scroll sentinel — triggers loadMore when visible */}
                             <div ref={sentinelRef} className="h-1" />
@@ -132,6 +143,11 @@ export default function ResultsClient() {
                     )}
                 </div>
             </div>
+            <RestaurantLocationModal
+                restaurant={selectedRestaurant}
+                open={selectedRestaurant !== null}
+                onClose={() => setSelectedRestaurant(null)}
+            />
         </main>
     );
 }

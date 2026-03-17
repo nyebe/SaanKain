@@ -1,6 +1,12 @@
 import { RestaurantResult } from '@/types/restaurant';
 import { SearchHistoryEntry } from '@/types/search';
 
+export interface RestaurantLocationModalProps {
+    restaurant: RestaurantResult | null;
+    open: boolean;
+    onClose: () => void;
+}
+
 export interface SearchFormProps {
     message: string;
     onChange: (v: string) => void;
@@ -19,6 +25,7 @@ export interface ResultCardProps {
 
 export interface ResultsListProps {
     results: RestaurantResult[];
+    onSelect?: (item: RestaurantResult) => void;
 }
 
 export interface DocHeaderProps {
