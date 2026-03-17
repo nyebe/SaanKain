@@ -4,3 +4,8 @@ export interface ParsedSearch {
     priceLevel?: number | null;
     openNow?: boolean;
 }
+
+export interface SearchHistoryEntry {
+    query: string;
+    usedAt: string; // ISO date string
+}

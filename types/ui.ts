@@ -1,4 +1,5 @@
 import { RestaurantResult } from '@/types/restaurant';
+import { SearchHistoryEntry } from '@/types/search';
 
 export interface SearchFormProps {
     message: string;
@@ -41,4 +42,11 @@ export interface ViewModeToggleProps {
     view: ViewMode
     onChange: (v: ViewMode) => void
     className?: string
+}
+
+export interface SearchHistorySheetProps {
+    history: SearchHistoryEntry[];
+    onSelect: (query: string) => void;
+    onRemove: (query: string) => void;
+    onClear: () => void;
 }

@@ -5,14 +5,19 @@ import {
     useState,
 } from 'react';
 
-import { useSearchParams } from 'next/navigation';
+import {
+    useRouter,
+    useSearchParams,
+} from 'next/navigation';
 
+import useSearchHistory from '@/hooks/useSearchHistory';
 import { RestaurantResult } from '@/types/restaurant';
 
 import { loadResults } from './dataResults';
 
 export default function useResults() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const initial = searchParams?.get('message') ?? '';
 
     const [message, setMessage] = useState<string>(initial);
@@ -20,12 +25,16 @@ export default function useResults() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [results, setResults] = useState<RestaurantResult[]>([]);
 
+    const { history, addEntry, removeEntry, clearHistory } = useSearchHistory();
+
     useEffect(() => {
         const msg = searchParams?.get('message');
         if (!msg) return;
         const query = msg; // capture as a plain string for async usage
 
         let mounted = true;
+
+        addEntry(query);
 
         async function fetch() {
             setLoading(true);
@@ -61,5 +70,21 @@ export default function useResults() {
         // no-op: navigation handled by SearchForm
     }
 
-    return { message, setMessage, loading, errorMessage, results, handleSubmit };
+    function selectHistoryEntry(query: string) {
+        setMessage(query);
+        router.push(`/results?message=${encodeURIComponent(query)}`);
+    }
+
+    return {
+        message,
+        setMessage,
+        loading,
+        errorMessage,
+        results,
+        handleSubmit,
+        history,
+        removeEntry,
+        clearHistory,
+        selectHistoryEntry,
+    };
 }
