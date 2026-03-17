@@ -1,5 +1,8 @@
 import { RestaurantResult } from '@/types/restaurant';
-import { SearchHistoryEntry } from '@/types/search';
+import {
+    BookmarkedRestaurant,
+    SearchHistoryEntry,
+} from '@/types/search';
 
 export interface RestaurantLocationModalProps {
     restaurant: RestaurantResult | null;
@@ -26,6 +29,8 @@ export interface ResultCardProps {
 export interface ResultsListProps {
     results: RestaurantResult[];
     onSelect?: (item: RestaurantResult) => void;
+    isBookmarked?: (fsqId: string) => boolean;
+    onBookmark?: (item: RestaurantResult) => void;
 }
 
 export interface DocHeaderProps {
@@ -55,5 +60,12 @@ export interface SearchHistorySheetProps {
     history: SearchHistoryEntry[];
     onSelect: (query: string) => void;
     onRemove: (query: string) => void;
+    onClear: () => void;
+}
+
+export interface BookmarksSheetProps {
+    bookmarks: BookmarkedRestaurant[];
+    onSelect: (restaurant: BookmarkedRestaurant) => void;
+    onRemove: (fsqId: string) => void;
     onClear: () => void;
 }

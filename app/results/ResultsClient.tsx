@@ -12,12 +12,14 @@ import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
 import SearchForm from '@/components/forms/SearchForm';
 import RestaurantLocationModal
     from '@/components/modals/RestaurantLocationModal';
+import BookmarksSheet from '@/components/sheets/BookmarksSheet';
 import SearchHistorySheet from '@/components/sheets/SearchHistorySheet';
 import ErrorState from '@/components/states/ErrorState';
 import LoadingState from '@/components/states/LoadingState';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import ResultsList from '@/components/views/ResultsList';
+import useBookmarks from '@/hooks/useBookmarks';
 import useGeoLocation from '@/hooks/useGeoLocation';
 import { RestaurantResult } from '@/types/restaurant';
 import { ViewMode } from '@/types/ui';
@@ -26,6 +28,7 @@ import useResults from './useResults';
 
 export default function ResultsClient() {
     const { useLocation, toggleLocation, coords, locationError, resolving } = useGeoLocation();
+    const { bookmarks, isBookmarked, toggleBookmark, removeBookmark, clearBookmarks } = useBookmarks();
     const [selectedRestaurant, setSelectedRestaurant] = useState<RestaurantResult | null>(null);
 
     const {
@@ -75,6 +78,19 @@ export default function ResultsClient() {
                         onRemove={removeEntry}
                         onClear={clearHistory}
                     />
+                    <BookmarksSheet
+                        bookmarks={bookmarks}
+                        onSelect={(bookmarked) => setSelectedRestaurant({
+                            fsqId: bookmarked.fsqId,
+                            name: bookmarked.name,
+                            address: bookmarked.address,
+                            locality: bookmarked.locality,
+                            region: bookmarked.region,
+                            category: bookmarked.category,
+                        })}
+                        onRemove={removeBookmark}
+                        onClear={clearBookmarks}
+                    />
                     <Button
                         type="button"
                         variant={useLocation ? 'default' : 'outline'}
@@ -123,7 +139,13 @@ export default function ResultsClient() {
 
                     {showResults && (
                         <>
-                            <ResultsList results={visibleResults} view={view} onSelect={setSelectedRestaurant} />
+                            <ResultsList
+                                results={visibleResults}
+                                view={view}
+                                onSelect={setSelectedRestaurant}
+                                isBookmarked={isBookmarked}
+                                onBookmark={toggleBookmark}
+                            />
 
                             {/* Scroll sentinel — triggers loadMore when visible */}
                             <div ref={sentinelRef} className="h-1" />

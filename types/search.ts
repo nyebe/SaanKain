@@ -14,3 +14,13 @@ export interface SearchHistoryEntry {
     query: string;
     usedAt: string; // ISO date string
 }
+
+export interface BookmarkedRestaurant {
+    fsqId: string;
+    name: string;
+    address: string | null;
+    locality: string | null;
+    region: string | null;
+    category: string | null;
+    savedAt: string; // ISO date string
+}
