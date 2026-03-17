@@ -1,10 +1,10 @@
 "use client"
 
-import React from 'react';
+import { ReactNode } from 'react';
 
 import { usePathname } from 'next/navigation';
 
-export default function PageContainer({ children }: { children: React.ReactNode }) {
+export default function PageContainer({ children }: { children: ReactNode }) {
     const pathname = usePathname() || '/';
     const isLanding = pathname === '/';
 

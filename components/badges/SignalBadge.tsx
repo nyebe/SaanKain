@@ -1,4 +1,6 @@
-export default function SignalBadge({ children }: { children: React.ReactNode }) {
+import { ReactNode } from 'react';
+
+export default function SignalBadge({ children }: { children: ReactNode }) {
     return (
         <span className="inline-flex items-center gap-2 px-2 py-1 text-xs rounded-md bg-white/5 border border-white/6">
             <svg className="w-3 h-3 text-muted-foreground" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

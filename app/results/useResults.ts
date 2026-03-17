@@ -23,6 +23,7 @@ export default function useResults() {
     useEffect(() => {
         const msg = searchParams?.get('message');
         if (!msg) return;
+        const query = msg; // capture as a plain string for async usage
 
         let mounted = true;
 
@@ -31,7 +32,7 @@ export default function useResults() {
             setErrorMessage(null);
             setResults([]);
             try {
-                const response = await loadResults(msg);
+                const response = await loadResults(query);
                 if (!mounted) return;
                 if (response.success) {
                     setResults(response.results);
