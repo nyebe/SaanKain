@@ -1,37 +1,21 @@
 "use client"
 
-import SearchForm from '@/components/forms/SearchForm';
-import DocHeader from '@/components/layout/DocHeader';
-import ErrorState from '@/components/states/ErrorState';
-import LoadingState from '@/components/states/LoadingState';
-import ResultsList from '@/components/views/ResultsList';
+import { useState } from 'react';
 
-import useLandingPage from './useLandingPage';
+import SearchForm from '@/components/forms/SearchForm';
 
 export default function LandingPage() {
-  const { message, setMessage, loading, errorMessage, results, handleSubmit } = useLandingPage();
+  const [message, setMessage] = useState<string>('');
 
   return (
-    <main className="min-h-screen p-6">
+    <main className="p-6">
       <div className="mx-auto max-w-3xl">
-        <DocHeader
-          title="SaanKain"
-          description="Design and UI architecture plan for the SaanKain restaurant discovery app."
-          author="Nyebe Creations"
-        />
-
         <SearchForm
           message={message}
           onChange={setMessage}
-          onSubmit={handleSubmit}
-          disabled={loading}
+          onSubmit={() => { }}
+          disabled={false}
         />
-
-        <div className="mt-6">
-          {loading && <LoadingState />}
-          {errorMessage && <ErrorState message={errorMessage} onRetry={handleSubmit} />}
-          {!loading && !errorMessage && <ResultsList results={results} />}
-        </div>
       </div>
     </main>
   );
