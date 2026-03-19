@@ -11,6 +11,7 @@ import NavBar from '@/components/layout/NavBar';
 import PageContainer from '@/components/layout/PageContainer';
 import ClientLoadingGate from '@/components/ui/ClientLoadingGate';
 import Providers from '@/providers/providers';
+import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -60,6 +61,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Analytics />
         <Providers>
           <ClientLoadingGate />
           <div className="min-h-screen flex flex-col">
