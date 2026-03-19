@@ -6,12 +6,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTrigger,
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetFooter,
+    SheetHeader,
+    SheetTrigger,
 } from '@/components/ui/sheet';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 
@@ -20,7 +20,6 @@ export default function NavBar() {
     const navItems = [
         { href: '/results', label: 'Results' },
         { href: '/about', label: 'About' },
-        { href: '/moodboard', label: 'Moodboard' },
     ]
 
     return (
