@@ -8,7 +8,6 @@ export default function Footer() {
                     <div className="text-sm text-muted-foreground">© {new Date().getFullYear()} Nyebe Creations</div>
                     <div className="flex gap-4 text-sm">
                         <Link href="/about" className="hover:underline">About</Link>
-                        <Link href="/moodboard" className="hover:underline">Moodboard</Link>
                         <a href="/docs/design-architecture.md" className="hover:underline">Design</a>
                     </div>
                 </div>
