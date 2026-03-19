@@ -45,7 +45,7 @@ const popIn = {
     visible: (i = 0) => ({
         opacity: 1,
         scale: 1,
-        transition: { type: 'spring', stiffness: 420, damping: 22, delay: i * 0.08 },
+        transition: { delay: i * 0.08, duration: 0.45 },
     }),
 };
 
