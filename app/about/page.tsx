@@ -27,7 +27,7 @@ const fadeUp = {
     visible: (i = 0) => ({
         opacity: 1,
         y: 0,
-        transition: { duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: 0.5, delay: i * 0.07, ease: 'easeOut' },
     }),
 };
 
@@ -36,7 +36,7 @@ const slideLeft = {
     visible: (i = 0) => ({
         opacity: 1,
         x: 0,
-        transition: { duration: 0.45, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: 0.45, delay: i * 0.1, ease: 'easeOut' },
     }),
 };
 
@@ -150,7 +150,7 @@ function RankingSection() {
                         key={s.label}
                         initial={{ opacity: 0, x: 30 }}
                         animate={inView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ delay: i * 0.09, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{ delay: i * 0.09, duration: 0.4, ease: 'easeOut' }}
                         className="flex items-center gap-3"
                     >
                         <span className="text-lg w-7 shrink-0">{s.emoji}</span>
@@ -160,7 +160,7 @@ function RankingSection() {
                                 className="h-full rounded-full bg-linear-to-r from-yellow-400 to-orange-400"
                                 initial={{ width: 0 }}
                                 animate={inView ? { width: `${s.weight}%` } : { width: 0 }}
-                                transition={{ delay: 0.3 + i * 0.09, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                                transition={{ delay: 0.3 + i * 0.09, duration: 0.7, ease: 'easeOut' }}
                             />
                         </div>
                         <span className="text-xs text-muted-foreground w-8 text-right">{s.weight}%</span>
@@ -334,7 +334,7 @@ function TechStack() {
                         key={s.category}
                         initial={{ opacity: 0, y: 24 }}
                         animate={inView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ delay: i * 0.1, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{ delay: i * 0.1, duration: 0.45, ease: 'easeOut' }}
                         whileHover={{
                             y: -4,
                             boxShadow: '0 8px 32px -4px rgba(0,0,0,0.12)',
@@ -379,7 +379,7 @@ export default function AboutPage() {
                 <motion.section
                     initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.55, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.55, delay: 0.15, ease: 'easeOut' }}
                     className="mt-10 px-5 py-6 rounded-2xl border border-border bg-card"
                 >
                     <h4 className="text-lg font-semibold">About SaanKain</h4>
@@ -415,7 +415,7 @@ export default function AboutPage() {
                                 className="absolute left-1/2 top-10 bottom-10 w-0.5 bg-linear-to-b from-yellow-400 via-violet-400 to-rose-400 hidden sm:block"
                                 initial={{ scaleY: 0, originY: 0 }}
                                 animate={inView ? { scaleY: 1 } : { scaleY: 0 }}
-                                transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+                                transition={{ duration: 1.1, ease: 'easeOut', delay: 0.2 }}
                             />
 
                             <div className="flex flex-col gap-5 md:mx-10">
