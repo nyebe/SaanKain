@@ -9,6 +9,7 @@ import {
 import Footer from '@/components/layout/Footer';
 import NavBar from '@/components/layout/NavBar';
 import PageContainer from '@/components/layout/PageContainer';
+import ClientLoadingGate from '@/components/ui/ClientLoadingGate';
 import Providers from '@/providers/providers';
 
 const geistSans = Geist({
@@ -60,6 +61,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
+          <ClientLoadingGate />
           <div className="min-h-screen flex flex-col">
             <NavBar />
 

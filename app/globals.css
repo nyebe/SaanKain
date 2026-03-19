@@ -120,10 +120,151 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
+  }
+}
+
+/* Loading screen styles */
+@keyframes move-diag {
+  from {
+    transform: translate(40vw, -40vh) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-40vw, 40vh) rotate(0deg);
+  }
+}
+
+@keyframes spin-z {
+  from {
+    transform: rotateZ(0deg);
+  }
+
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background: #000;
+}
+
+.loading-screen.loading-light {
+  background: #fff;
+}
+
+.loading-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+}
+
+/* dense tiled triangle background using SVG data URI */
+.loading-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,2 22,22 2,22' fill='%23ffffff'/></svg>");
+  background-repeat: repeat;
+  background-size: 28px 28px;
+  opacity: 0.06;
+  animation: bg-move 12s linear infinite;
+}
+
+.loading-screen.loading-light::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,2 22,22 2,22' fill='%23000'/></svg>");
+  opacity: 0.08;
+}
+
+.triangle-pattern {
+  position: absolute;
+  /* small decorative triangles */
+  width: 120px;
+  height: 120px;
+  z-index: 1;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0));
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  animation: move-diag-small 3.6s ease-in-out infinite;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.loading-screen.loading-light .triangle-pattern {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0));
+}
+
+.loading-logo {
+  position: relative;
+  z-index: 2;
+  width: max-content;
+  height: max-content;
+  animation: coin-spin 1.2s linear infinite;
+  transform-style: preserve-3d;
+  transform-origin: center;
+  backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .triangle-pattern,
+  .loading-logo,
+  .loading-screen::before {
+    animation: none !important;
+  }
+}
+
+@keyframes move-diag-small {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(-60px, 60px) rotate(2deg);
+  }
+
+  100% {
+    transform: translate(-120px, 120px) rotate(0deg);
+  }
+}
+
+@keyframes bg-move {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -400px 400px;
+  }
+}
+
+@keyframes coin-spin {
+  0% {
+    transform: rotateY(0deg) rotateX(12deg);
+  }
+
+  50% {
+    transform: rotateY(360deg) rotateX(12deg);
+  }
+
+  100% {
+    transform: rotateY(720deg) rotateX(12deg);
   }
 }
