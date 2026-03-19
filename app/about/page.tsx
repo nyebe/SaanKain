@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 import SignalBadge from '@/components/badges/SignalBadge';
 import SectionCard from '@/components/cards/SectionCard';
 import TechnologyCard from '@/components/cards/TechnologyCard';
@@ -83,43 +81,6 @@ export default function AboutPage() {
                             <TechnologyCard title="Testing" items={["Vitest", "Playwright"]} />
                         </div>
                     </SectionCard>
-
-                    <SectionCard>
-                        <h2 className="text-xl font-semibold">Why This Project Exists</h2>
-                        <p className="mt-2 text-sm text-muted-foreground">The goal is to demonstrate product thinking, clean architecture, and testable systems. It's designed to be interview-friendly — small, focused, and explainable while still showing end-to-end engineering decisions.</p>
-                    </SectionCard>
-
-                    <SectionCard>
-                        <h2 className="text-xl font-semibold">Future Improvements</h2>
-                        <ul className="mt-2 list-disc pl-5 text-sm">
-                            <li>LLM-assisted query interpretation to handle ambiguity</li>
-                            <li>Better geolocation and reverse-geocoding for accuracy</li>
-                            <li>User preference learning and personalization</li>
-                            <li>Map views and directions</li>
-                            <li>Richer cuisine detection with synonyms and aliases</li>
-                        </ul>
-                    </SectionCard>
-
-                    <SectionCard>
-                        <h2 className="text-xl font-semibold">Developer Notes</h2>
-                        <p className="mt-2 text-sm text-muted-foreground">The repository follows a strict separation of concerns:</p>
-                        <ul className="mt-2 list-disc pl-5 text-sm">
-                            <li>UI — <code>components/</code></li>
-                            <li>Hooks (logic) — <code>hooks/</code> and page colocated hooks</li>
-                            <li>Services (data) — <code>services/</code></li>
-                            <li>API — <code>app/api/</code> routes</li>
-                            <li>Core modules — <code>lib/parser</code>, <code>lib/ranking</code>, <code>lib/foursquare</code></li>
-                        </ul>
-                    </SectionCard>
-
-                    <div className="mt-6 prose prose-sm mb-12">
-                        <h2 className="text-lg font-semibold">Closing</h2>
-                        <p>
-                            SaanKain is a small experiment combining Filipino culture, food discovery, and engineering curiosity. If
-                            you want to dig deeper, open the <Link href="/docs/design-architecture.md">design architecture</Link>.
-                        </p>
-                        <p className="mt-4 text-sm">Salamat! — Nyebe Creations</p>
-                    </div>
                 </div>
             </div>
         </main>
