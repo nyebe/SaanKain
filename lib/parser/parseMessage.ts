@@ -38,8 +38,8 @@ function findLocation(message: string): string | null {
     loc = loc.replace(/\b(open now|open|restaurant|restaurants)\b/gi, '').trim();
     loc = loc.replace(new RegExp(Object.keys(PRICE_KEYWORDS).join('|'), 'gi'), '').trim();
     const normalized = loc.toLowerCase().replace(/[.,!?:;]$/g, '').trim();
-    const ignoreList = ['me', 'here', 'nearby', 'dito', 'rito', 'doon', 'dun'];
-    if (ignoreList.includes(normalized)) return null;
+    const vagueList = ['me', 'here', 'nearby', 'dito', 'rito', 'doon', 'dun'];
+    if (vagueList.includes(normalized)) return 'me';
     return loc || null;
 }
 

@@ -1,6 +1,6 @@
 import {
-  NextRequest,
-  NextResponse,
+    NextRequest,
+    NextResponse,
 } from 'next/server';
 
 import { searchPlaces } from '@/lib/foursquare/searchPlaces';
@@ -30,6 +30,18 @@ export async function GET(request: NextRequest): Promise<NextResponse<ExecuteRes
     try {
         const results = await searchPlaces(parsed, validation.coords);
         const ranked = rankResults(results, parsed);
+        if (parsed.locationText && (!ranked || ranked.length === 0) && validation.coords == null) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: {
+                        code: 'LOCATION_SUGGESTION',
+                        message: 'Could not find your location. Try turning on location (use the location button) so results are searched by your current location.',
+                    },
+                },
+                { status: 400 }
+            );
+        }
 
         return NextResponse.json({
             success: true,

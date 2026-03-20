@@ -79,7 +79,7 @@ export default function ResultsClient() {
     return (
         <main className="p-6">
             <div className="mx-auto max-w-3xl">
-                <div className="flex items-center mb-6">
+                <div className="flex items-center mb-6 gap-4">
                     <SearchHistorySheet
                         history={history}
                         onSelect={selectHistoryEntry}
@@ -181,7 +181,7 @@ export default function ResultsClient() {
 
                             {isExhausted && (
                                 <p className="text-center text-xs text-muted-foreground py-6">
-                                    Yan na lahat ng results. Try a different search!
+                                    Try a different search!
                                 </p>
                             )}
                         </>
