@@ -5,15 +5,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import ThemeToggle from '@/components/toggles/ThemeToggle';
 import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetFooter,
-    SheetHeader,
-    SheetTrigger,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTrigger,
 } from '@/components/ui/sheet';
-import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function NavBar() {
     const [open, setOpen] = useState(false)

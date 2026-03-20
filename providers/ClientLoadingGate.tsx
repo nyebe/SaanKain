@@ -9,7 +9,7 @@ import React, {
 import { useTheme } from 'next-themes';
 import { usePathname } from 'next/navigation';
 
-import LoadingScreen from './LoadingScreen';
+import LoadingScreen from '../components/states/LoadingScreen';
 
 export default function ClientLoadingGate() {
     const pathname = usePathname();

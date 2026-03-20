@@ -9,7 +9,7 @@ import {
 import Footer from '@/components/layout/Footer';
 import NavBar from '@/components/layout/NavBar';
 import PageContainer from '@/components/layout/PageContainer';
-import ClientLoadingGate from '@/components/ui/ClientLoadingGate';
+import ClientLoadingGate from '@/providers/ClientLoadingGate';
 import Providers from '@/providers/providers';
 import { Analytics } from '@vercel/analytics/next';
 
