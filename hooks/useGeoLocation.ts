@@ -1,15 +1,19 @@
 "use client"
 
 import {
-    useCallback,
-    useState,
+  useCallback,
+  useState,
 } from 'react';
 
-import { GeoCoords } from '@/types/search';
+import {
+  GeoCoords,
+  GeoLocation,
+} from '@/types/search';
 
 export default function useGeoLocation() {
     const [useLocation, setUseLocation] = useState<boolean>(false);
     const [coords, setCoords] = useState<GeoCoords | null>(null);
+    const [location, setLocation] = useState<GeoLocation | null>(null);
     const [locationError, setLocationError] = useState<string | null>(null);
     const [resolving, setResolving] = useState<boolean>(false);
 
@@ -31,13 +35,49 @@ export default function useGeoLocation() {
         setLocationError(null);
 
         navigator.geolocation.getCurrentPosition(
-            (position) => {
-                setCoords({
+            async (position) => {
+                const newCoords: GeoCoords = {
                     lat: position.coords.latitude,
                     lng: position.coords.longitude,
-                });
+                };
+                setCoords(newCoords);
                 setUseLocation(true);
-                setResolving(false);
+
+                try {
+                    const url = `https://nominatim.openstreetmap.org/reverse?lat=${encodeURIComponent(newCoords.lat)}&lon=${encodeURIComponent(newCoords.lng)}&format=json`;
+                    const res = await fetch(url, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'User-Agent': 'SaanKain/1.0 (+https://example.com)'
+                        }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        const displayName = data?.display_name ?? '';
+                        const addr = data?.address ?? {};
+
+                        const municipality = addr.town ?? addr.municipality ?? addr.village ?? addr.city_district ?? addr.county ?? null;
+                        const city = addr.city ?? addr.town ?? addr.village ?? null;
+                        const region = addr.state ?? addr.region ?? addr.county ?? null;
+                        const country = addr.country ?? null;
+
+                        setLocation({
+                            coords: newCoords,
+                            displayName,
+                            address: addr,
+                            municipality,
+                            city,
+                            region,
+                            country,
+                        });
+                    } else {
+                        setLocation(null);
+                    }
+                } catch (err) {
+                    setLocation(null);
+                } finally {
+                    setResolving(false);
+                }
             },
             () => {
                 setLocationError('Hindi ma-access ang location mo. Check your browser permissions.');
@@ -47,5 +87,5 @@ export default function useGeoLocation() {
         );
     }, [useLocation]);
 
-    return { useLocation, toggleLocation, coords, locationError, resolving };
+    return { useLocation, toggleLocation, coords, location, locationError, resolving };
 }

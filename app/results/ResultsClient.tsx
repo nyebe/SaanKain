@@ -27,7 +27,7 @@ import { ViewMode } from '@/types/ui';
 import useResults from './useResults';
 
 export default function ResultsClient() {
-    const { useLocation, toggleLocation, coords, locationError, resolving } = useGeoLocation();
+    const { useLocation, toggleLocation, coords, location, locationError, resolving } = useGeoLocation();
     const { bookmarks, isBookmarked, toggleBookmark, removeBookmark, clearBookmarks } = useBookmarks();
     const [selectedRestaurant, setSelectedRestaurant] = useState<RestaurantResult | null>(null);
 
@@ -107,9 +107,13 @@ export default function ResultsClient() {
                             <MapPin className="size-4" />
                         )}
                     </Button>
-                    {useLocation && coords && (
-                        <span className="shrink-0 tabular-nums text-xs text-muted-foreground ml-2">
-                            {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
+                    {useLocation && (
+                        <span className="shrink-0 tabular-nums text-xs text-muted-foreground ml-2 max-w-[60%] truncate">
+                            {(() => {
+                                const parts = [location?.municipality, location?.city, location?.region, location?.country].filter(Boolean) as string[];
+                                if (parts.length > 0) return parts.join(', ');
+                                return coords ? `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}` : '';
+                            })()}
                         </span>
                     )}
                 </div>

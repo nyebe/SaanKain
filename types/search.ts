@@ -3,6 +3,16 @@ export interface GeoCoords {
     lng: number;
 }
 
+export interface GeoLocation {
+    coords: GeoCoords;
+    displayName: string;
+    // optional raw address object returned by Nominatim
+    address?: Record<string, any> | null;
+    municipality?: string | null;
+    city?: string | null;
+    region?: string | null;
+    country?: string | null;
+}
 export interface ParsedSearch {
     cuisine?: string | null;
     locationText?: string | null;
