@@ -123,6 +123,27 @@
 
   body {
     @apply bg-background text-foreground;
+    /* site-level background variable (can be overridden by theme classes) */
+    background-color: var(--site-bg, #ffffff);
+  }
+
+  /* patterned background layer using public/app-logo/pattern.png
+     - put your provided pattern image at /public/app-logo/pattern.png
+     - opacity and size tuned for subtlety; adjusts in .dark and .theme-smoke */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* primary: user-provided PNG at /public/app-logo/pattern.png
+       fallback: inline SVG triangle pattern (encoded) */
+    background-image: url('/app-logo/pattern-light.svg'), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,2 22,22 2,22' fill='%23CBD5E1'/></svg>");
+    background-repeat: repeat;
+    background-position: center;
+    background-size: 48px 48px;
+    opacity: 0.06;
+    mix-blend-mode: multiply;
   }
 
   html {
@@ -267,4 +288,31 @@
   100% {
     transform: rotateY(720deg) rotateX(12deg);
   }
+}
+
+/* Theme overrides for site background
+   - `.theme-smoke` enables the smoke-gray base (light gray)
+   - `.dark` will set a light-gray base when dark mode is active (per request)
+   Add these classes on the `html` element (e.g. <html class="theme-smoke">)
+*/
+/* Default (light) — white background with smoke-gray triangles */
+:root {
+  --site-bg: #ffffff;
+  --triangle-fill: #CBD5E1;
+  /* smoke gray */
+}
+
+/* Dark mode — black background with dark-gray triangles */
+.dark {
+  --site-bg: #000000;
+  --triangle-fill: #374151;
+  /* dark gray */
+}
+
+/* Slightly tweak patterned layer per theme */
+.dark body::before {
+  opacity: 0.08;
+  filter: none;
+  mix-blend-mode: normal;
+  background-image: url('/app-logo/pattern-dark.svg'), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='12,2 22,22 2,22' fill='%23374151'/></svg>");
 }
