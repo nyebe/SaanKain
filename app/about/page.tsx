@@ -19,9 +19,9 @@ import {
     Star,
     Zap,
 } from 'lucide-react';
+import Image from 'next/image';
 
 import HeroV2 from '@/components/hero/HeroV2';
-import Image from 'next/image';
 
 const fadeUp = {
     hidden: { opacity: 0, y: 32 },

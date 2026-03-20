@@ -9,9 +9,11 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { NativeSelect } from '@/components/ui/native-select';
-import { SortField } from '@/types/ui';
 import { cn } from '@/lib/utils';
-import { SortControlProps } from '@/types/ui';
+import {
+    SortControlProps,
+    SortField,
+} from '@/types/ui';
 
 export default function SortControl({ field, direction, onChange, className }: SortControlProps) {
     function handleFieldChange(e: React.ChangeEvent<HTMLSelectElement>) {

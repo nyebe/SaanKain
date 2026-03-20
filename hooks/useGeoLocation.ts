@@ -1,14 +1,14 @@
 "use client"
 
 import {
-  useCallback,
-  useEffect,
-  useState,
+    useCallback,
+    useEffect,
+    useState,
 } from 'react';
 
 import {
-  GeoCoords,
-  GeoLocation,
+    GeoCoords,
+    GeoLocation,
 } from '@/types/search';
 
 export default function useGeoLocation() {

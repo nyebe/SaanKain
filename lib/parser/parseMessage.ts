@@ -41,10 +41,9 @@ function findLocation(message: string): string | null {
     const vagueList = ['me', 'here', 'nearby', 'dito', 'rito', 'doon', 'dun'];
     if (vagueList.includes(normalized)) return 'me';
 
-    // Normalize common abbreviations to full place names
-    if (normalized === 'bgc') return 'Bonifacio Global City';
-
-    return loc || null;
+    // Return normalized (lowercase) location text so callers get a
+    // predictable, comparable value (e.g., 'bgc').
+    return normalized || null;
 }
 
 function parseMessageFallback(raw: string): ParsedSearch {

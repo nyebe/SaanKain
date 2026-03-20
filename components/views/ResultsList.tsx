@@ -24,8 +24,8 @@ export default function ResultsList({ results, view = 'list', onSelect, isBookma
           (typeof legacy.fsq_place_id === 'string'
             ? (legacy.fsq_place_id as string)
             : typeof legacy.fsq_id === 'string'
-            ? (legacy.fsq_id as string)
-            : String(legacy.id ?? ''));
+              ? (legacy.fsq_id as string)
+              : String(legacy.id ?? ''));
 
         const minimal = {
           fsq_place_id,
