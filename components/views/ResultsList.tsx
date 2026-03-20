@@ -9,7 +9,7 @@ import {
 
 export default function ResultsList({ results, view = 'list', onSelect, isBookmarked, onBookmark }: ResultsListProps & { view?: ViewMode }) {
   if (!results || results.length === 0) {
-    return <div className="text-sm text-muted-foreground">No results yet. Try a different query.</div>;
+    return <div className="text-sm text-muted-foreground">Walang nahanap na kainan para sa query na ito. Try another cuisine or location.</div>;
   }
 
   const containerClass = view === 'gallery' ? 'flex justify-center flex-wrap gap-4' : 'flex flex-col gap-4'
@@ -18,7 +18,7 @@ export default function ResultsList({ results, view = 'list', onSelect, isBookma
     <div className={containerClass}>
       {results.map((item) => {
         const minimal = {
-          fsq_place_id: (item as any).fsqId || (item as any).fsq_place_id || String((item as any).id || ''),
+          fsq_place_id: (item as any).fsqId || (item as any).fsq_place_id || (item as any).fsq_id || String((item as any).id || ''),
           name: item.name,
           location: {
             address: item.address ?? null,

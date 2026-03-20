@@ -19,9 +19,15 @@ export default function ResultGalleryCard({
     onBookmark?: () => void;
 }) {
     const category = item.categories && item.categories.length ? item.categories[0].name : null;
-    const locationText = [item.location?.locality, item.location?.address].filter(Boolean).join(' · ');
-    const distanceText = item.distance == null ? null : item.distance < 1000 ? `${item.distance} m` : `${(item.distance / 1000).toFixed(1)} km`;
-    const seed = encodeURIComponent(item.fsq_place_id || item.name);
+    const locationText = [item.location?.locality, item.location?.address].filter(Boolean).join(' Â· ');
+    const distanceText =
+        item.distance == null
+            ? null
+            : item.distance < 1000
+                ? `${item.distance} m`
+                : `${(item.distance / 1000).toFixed(1)} km`;
+    const fsqId = item.fsq_place_id || item.fsq_id || item.name;
+    const seed = encodeURIComponent(fsqId);
     const avatarUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${seed}`;
 
     return (

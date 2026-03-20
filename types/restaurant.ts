@@ -12,7 +12,8 @@ export type RestaurantResult = {
 };
 
 export type FoursquarePlace = {
-    fsq_place_id: string;
+    fsq_place_id?: string;
+    fsq_id?: string;
     name: string;
     location?: {
         address?: string | null;

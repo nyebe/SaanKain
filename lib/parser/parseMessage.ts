@@ -1,5 +1,6 @@
 import { ParsedSearch } from '@/types/search';
 
+import llmParseMessage from './llmParseMessage';
 import {
   CUISINES,
   OPEN_NOW_PATTERNS,
@@ -41,7 +42,7 @@ function findLocation(message: string): string | null {
     return loc || null;
 }
 
-export function parseMessage(raw: string): ParsedSearch {
+function parseMessageFallback(raw: string): ParsedSearch {
     const message = (raw || '').toLowerCase();
 
     const cuisine = findCuisine(message);
@@ -55,6 +56,24 @@ export function parseMessage(raw: string): ParsedSearch {
         priceLevel: priceLevel ?? null,
         openNow,
     };
+}
+
+export async function parseMessage(raw: string): Promise<ParsedSearch> {
+    const shouldUseLLM =
+        process.env.USE_LLM_PARSE !== 'false' &&
+        process.env.NODE_ENV !== 'test' &&
+        !!process.env.GROQ_API_KEY;
+
+    if (shouldUseLLM) {
+        try {
+            const parsed = await llmParseMessage(raw);
+            return parsed;
+        } catch (err) {
+            // fall through to regex fallback
+        }
+    }
+
+    return parseMessageFallback(raw);
 }
 
 export default parseMessage;

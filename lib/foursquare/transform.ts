@@ -1,7 +1,8 @@
 import { RestaurantResult } from '@/types/restaurant';
 
 export type FoursquarePlaceRaw = {
-    fsq_place_id: string;
+    fsq_place_id?: string;
+    fsq_id?: string;
     name: string;
     location?: {
         address?: string;
@@ -16,8 +17,10 @@ export type FoursquarePlaceRaw = {
 };
 
 export function transformPlace(raw: FoursquarePlaceRaw): RestaurantResult {
+    const fsqId = raw.fsq_place_id ?? raw.fsq_id ?? '';
+
     return {
-        fsqId: raw.fsq_place_id,
+        fsqId,
         name: raw.name,
         address: raw.location?.address ?? raw.location?.formatted_address ?? null,
         locality: raw.location?.locality ?? null,

@@ -13,8 +13,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<ExecuteRes
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
     const message = searchParams.get('message');
+    const ll = searchParams.get('ll');
 
-    const validation = validateExecuteQuery(code, message);
+    const validation = validateExecuteQuery(code, message, ll);
 
     if (!validation.valid) {
         const httpStatus = validation.error.code === 'UNAUTHORIZED' ? 401 : 400;
@@ -24,10 +25,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<ExecuteRes
         );
     }
 
-    const parsed = parseMessage(validation.message);
+    const parsed = await parseMessage(validation.message);
 
     try {
-        const results = await searchPlaces(parsed);
+        const results = await searchPlaces(parsed, validation.coords);
         const ranked = rankResults(results, parsed);
 
         return NextResponse.json({

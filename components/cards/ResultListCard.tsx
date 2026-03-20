@@ -25,7 +25,8 @@ export default function ResultListCard({
   const category = item.categories && item.categories.length ? item.categories[0].name : null;
   const locationText = [item.location?.address, item.location?.locality, item.location?.region].filter(Boolean).join(', ');
   const closed = Boolean(item.date_closed);
-  const seed = encodeURIComponent(item.fsq_place_id || item.name);
+  const fsqId = item.fsq_place_id || item.fsq_id || item.name;
+  const seed = encodeURIComponent(fsqId);
   const avatarUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${seed}`;
 
   return (
