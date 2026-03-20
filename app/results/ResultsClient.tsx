@@ -9,6 +9,7 @@ import {
 import { MapPin } from 'lucide-react';
 
 import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
+import SortControl from '@/components/buttonGroup/SortControl';
 import SearchForm from '@/components/forms/SearchForm';
 import RestaurantLocationModal
     from '@/components/modals/RestaurantLocationModal';
@@ -55,6 +56,12 @@ export default function ResultsClient() {
         }
     });
     const sentinelRef = useRef<HTMLDivElement>(null);
+    const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>(() => {
+        try { return (localStorage.getItem('saankain_sort_field') as 'name' | 'type' | 'distance') ?? 'name'; } catch { return 'name'; }
+    });
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
+        try { return (localStorage.getItem('saankain_sort_direction') as 'asc' | 'desc') ?? 'asc'; } catch { return 'asc'; }
+    });
 
     useEffect(() => {
         const sentinel = sentinelRef.current;
@@ -148,13 +155,24 @@ export default function ResultsClient() {
                 <div className="mt-6">
                     <div className="flex items-center justify-between gap-4 mb-4">
                         <div />
-                        <ViewModeToggle
-                            view={view}
-                            onChange={(v) => {
-                                setView(v);
-                                try { localStorage.setItem('saankain_view', v); } catch { }
-                            }}
-                        />
+                        <div className="flex items-center gap-2">
+                            <SortControl
+                                field={sortField}
+                                direction={sortDirection}
+                                onChange={(field, dir) => {
+                                    setSortField(field);
+                                    setSortDirection(dir);
+                                    try { localStorage.setItem('saankain_sort_field', field); localStorage.setItem('saankain_sort_direction', dir); } catch { }
+                                }}
+                            />
+                            <ViewModeToggle
+                                view={view}
+                                onChange={(v) => {
+                                    setView(v);
+                                    try { localStorage.setItem('saankain_view', v); } catch { }
+                                }}
+                            />
+                        </div>
                     </div>
 
                     {loading && <LoadingState />}
@@ -163,7 +181,23 @@ export default function ResultsClient() {
                     {showResults && (
                         <>
                             <ResultsList
-                                results={visibleResults}
+                                results={[...visibleResults].sort((a, b) => {
+                                    const dir = sortDirection === 'asc' ? 1 : -1;
+                                    if (sortField === 'name') {
+                                        const A = (a.name || '').toLowerCase();
+                                        const B = (b.name || '').toLowerCase();
+                                        return A < B ? -1 * dir : A > B ? 1 * dir : 0;
+                                    }
+                                    if (sortField === 'type') {
+                                        const A = (a.category || '').toLowerCase();
+                                        const B = (b.category || '').toLowerCase();
+                                        return A < B ? -1 * dir : A > B ? 1 * dir : 0;
+                                    }
+                                    // distance
+                                    const Ad = typeof a.distance === 'number' ? a.distance : Number.POSITIVE_INFINITY;
+                                    const Bd = typeof b.distance === 'number' ? b.distance : Number.POSITIVE_INFINITY;
+                                    return (Ad - Bd) * dir;
+                                })}
                                 view={view}
                                 onSelect={setSelectedRestaurant}
                                 isBookmarked={isBookmarked}

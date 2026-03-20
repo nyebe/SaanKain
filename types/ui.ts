@@ -62,6 +62,16 @@ export interface ViewModeToggleProps {
     className?: string
 }
 
+export type SortField = 'name' | 'type' | 'distance'
+export type SortDirection = 'asc' | 'desc'
+
+export interface SortControlProps {
+    field: SortField
+    direction: SortDirection
+    onChange: (field: SortField, direction: SortDirection) => void
+    className?: string
+}
+
 export interface SearchHistorySheetProps {
     history: SearchHistoryEntry[];
     onSelect: (query: string) => void;
