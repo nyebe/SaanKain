@@ -19,6 +19,7 @@ import {
     Star,
     Zap,
 } from 'lucide-react';
+import Image from 'next/image';
 
 import HeroV2 from '@/components/hero/HeroV2';
 
@@ -385,7 +386,7 @@ export default function AboutPage() {
                     <h4 className="text-lg font-semibold">About SaanKain</h4>
                     <p className="text-sm leading-relaxed text-muted-foreground">
                         Ever asked yourself:{' '}
-                        <span className="font-semibold text-foreground">"Saan ba tayo kakain?"</span>{' '}
+                        <span className="font-semibold text-foreground">&quot;Saan ba tayo kakain?&quot;</span>{' '}
                         SaanKain lets you type that exact question — or anything similar — in natural language.
                         Example:{' '}
                         <code className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs text-foreground">
@@ -518,9 +519,11 @@ export default function AboutPage() {
                             <div className="absolute inset-0 bg-linear-to-br opacity-6 pointer-events-none" />
 
                             <div className="flex flex-col items-center p-6">
-                                <img
+                                <Image
                                     src="https://media.licdn.com/dms/image/v2/D5603AQHIMQF9Bwq98Q/profile-displayphoto-crop_800_800/B56ZnM2l2QKEAM-/0/1760078487597?e=1775692800&v=beta&t=aT1rdy9WGiIesWvFqWkiSmXn-_HBHn_3It59o3EFTUM"
                                     alt="Ian Cedric Ramirez"
+                                    width={144}
+                                    height={144}
                                     className="w-36 h-36 rounded-full object-cover border-4 border-white/5 shadow-md -mt-12"
                                 />
 

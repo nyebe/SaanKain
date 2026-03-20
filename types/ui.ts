@@ -1,6 +1,7 @@
 import { RestaurantResult } from '@/types/restaurant';
 import {
     BookmarkedRestaurant,
+    GeoCoords,
     SearchHistoryEntry,
 } from '@/types/search';
 
@@ -15,6 +16,11 @@ export interface SearchFormProps {
     onChange: (v: string) => void;
     onSubmit: () => void;
     disabled?: boolean;
+    useLocation?: boolean;
+    toggleLocation?: () => void;
+    coords?: GeoCoords | null;
+    resolving?: boolean;
+    locationError?: string | null;
 }
 
 export interface ErrorStateProps {
@@ -53,6 +59,16 @@ export type ViewMode = 'list' | 'gallery'
 export interface ViewModeToggleProps {
     view: ViewMode
     onChange: (v: ViewMode) => void
+    className?: string
+}
+
+export type SortField = 'name' | 'type' | 'distance'
+export type SortDirection = 'asc' | 'desc'
+
+export interface SortControlProps {
+    field: SortField
+    direction: SortDirection
+    onChange: (field: SortField, direction: SortDirection) => void
     className?: string
 }
 

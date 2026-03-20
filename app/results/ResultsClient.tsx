@@ -8,6 +8,7 @@ import {
 
 import { MapPin } from 'lucide-react';
 
+import SortControl from '@/components/buttonGroup/SortControl';
 import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
 import SearchForm from '@/components/forms/SearchForm';
 import RestaurantLocationModal
@@ -16,6 +17,7 @@ import BookmarksSheet from '@/components/sheets/BookmarksSheet';
 import SearchHistorySheet from '@/components/sheets/SearchHistorySheet';
 import ErrorState from '@/components/states/ErrorState';
 import LoadingState from '@/components/states/LoadingState';
+import NoResultsHero from '@/components/states/NoResultsHero';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import ResultsList from '@/components/views/ResultsList';
@@ -27,7 +29,7 @@ import { ViewMode } from '@/types/ui';
 import useResults from './useResults';
 
 export default function ResultsClient() {
-    const { useLocation, toggleLocation, coords, locationError, resolving } = useGeoLocation();
+    const { useLocation, toggleLocation, coords, location, locationError, resolving } = useGeoLocation();
     const { bookmarks, isBookmarked, toggleBookmark, removeBookmark, clearBookmarks } = useBookmarks();
     const [selectedRestaurant, setSelectedRestaurant] = useState<RestaurantResult | null>(null);
 
@@ -45,8 +47,21 @@ export default function ResultsClient() {
         clearHistory,
         selectHistoryEntry,
     } = useResults(coords);
-    const [view, setView] = useState<ViewMode>('list');
+    const [view, setView] = useState<ViewMode>(() => {
+        try {
+            const v = localStorage.getItem('saankain_view') as ViewMode | null;
+            return v ?? 'list';
+        } catch {
+            return 'list';
+        }
+    });
     const sentinelRef = useRef<HTMLDivElement>(null);
+    const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>(() => {
+        try { return (localStorage.getItem('saankain_sort_field') as 'name' | 'type' | 'distance') ?? 'name'; } catch { return 'name'; }
+    });
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
+        try { return (localStorage.getItem('saankain_sort_direction') as 'asc' | 'desc') ?? 'asc'; } catch { return 'asc'; }
+    });
 
     useEffect(() => {
         const sentinel = sentinelRef.current;
@@ -71,7 +86,7 @@ export default function ResultsClient() {
     return (
         <main className="p-6">
             <div className="mx-auto max-w-3xl">
-                <div className="flex items-center mb-6">
+                <div className="flex items-center mb-6 gap-4">
                     <SearchHistorySheet
                         history={history}
                         onSelect={selectHistoryEntry}
@@ -107,9 +122,13 @@ export default function ResultsClient() {
                             <MapPin className="size-4" />
                         )}
                     </Button>
-                    {useLocation && coords && (
-                        <span className="shrink-0 tabular-nums text-xs text-muted-foreground ml-2">
-                            {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
+                    {useLocation && (
+                        <span className="shrink-0 tabular-nums text-xs text-muted-foreground ml-2 max-w-[60%] truncate">
+                            {(() => {
+                                const parts = [location?.municipality, location?.city, location?.region, location?.country].filter(Boolean) as string[];
+                                if (parts.length > 0) return parts.join(', ');
+                                return coords ? `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}` : '';
+                            })()}
                         </span>
                     )}
                 </div>
@@ -120,6 +139,11 @@ export default function ResultsClient() {
                             onChange={setMessage}
                             onSubmit={handleSubmit}
                             disabled={loading}
+                            useLocation={useLocation}
+                            toggleLocation={toggleLocation}
+                            coords={coords}
+                            resolving={resolving}
+                            locationError={locationError}
                         />
                     </div>
                 </div>
@@ -131,7 +155,24 @@ export default function ResultsClient() {
                 <div className="mt-6">
                     <div className="flex items-center justify-between gap-4 mb-4">
                         <div />
-                        <ViewModeToggle view={view} onChange={setView} />
+                        <div className="flex items-center gap-2">
+                            <SortControl
+                                field={sortField}
+                                direction={sortDirection}
+                                onChange={(field, dir) => {
+                                    setSortField(field);
+                                    setSortDirection(dir);
+                                    try { localStorage.setItem('saankain_sort_field', field); localStorage.setItem('saankain_sort_direction', dir); } catch { }
+                                }}
+                            />
+                            <ViewModeToggle
+                                view={view}
+                                onChange={(v) => {
+                                    setView(v);
+                                    try { localStorage.setItem('saankain_view', v); } catch { }
+                                }}
+                            />
+                        </div>
                     </div>
 
                     {loading && <LoadingState />}
@@ -140,7 +181,23 @@ export default function ResultsClient() {
                     {showResults && (
                         <>
                             <ResultsList
-                                results={visibleResults}
+                                results={[...visibleResults].sort((a, b) => {
+                                    const dir = sortDirection === 'asc' ? 1 : -1;
+                                    if (sortField === 'name') {
+                                        const A = (a.name || '').toLowerCase();
+                                        const B = (b.name || '').toLowerCase();
+                                        return A < B ? -1 * dir : A > B ? 1 * dir : 0;
+                                    }
+                                    if (sortField === 'type') {
+                                        const A = (a.category || '').toLowerCase();
+                                        const B = (b.category || '').toLowerCase();
+                                        return A < B ? -1 * dir : A > B ? 1 * dir : 0;
+                                    }
+                                    // distance
+                                    const Ad = typeof a.distance === 'number' ? a.distance : Number.POSITIVE_INFINITY;
+                                    const Bd = typeof b.distance === 'number' ? b.distance : Number.POSITIVE_INFINITY;
+                                    return (Ad - Bd) * dir;
+                                })}
                                 view={view}
                                 onSelect={setSelectedRestaurant}
                                 isBookmarked={isBookmarked}
@@ -158,10 +215,13 @@ export default function ResultsClient() {
 
                             {isExhausted && (
                                 <p className="text-center text-xs text-muted-foreground py-6">
-                                    Yan na lahat ng results. Try a different search!
+                                    Try a different search!
                                 </p>
                             )}
                         </>
+                    )}
+                    {!loading && !errorMessage && visibleResults.length === 0 && (
+                        <NoResultsHero message={message} />
                     )}
                 </div>
             </div>

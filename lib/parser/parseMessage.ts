@@ -1,9 +1,10 @@
 import { ParsedSearch } from '@/types/search';
 
+import llmParseMessage from './llmParseMessage';
 import {
-  CUISINES,
-  OPEN_NOW_PATTERNS,
-  PRICE_KEYWORDS,
+    CUISINES,
+    OPEN_NOW_PATTERNS,
+    PRICE_KEYWORDS,
 } from './rules';
 
 function findCuisine(message: string): string | null {
@@ -34,14 +35,18 @@ function findLocation(message: string): string | null {
     const m = message.match(nearRe);
     if (!m) return null;
     let loc = m[1].trim();
-    // strip trailing keywords
     loc = loc.replace(/\b(open now|open|restaurant|restaurants)\b/gi, '').trim();
-    // remove any trailing price words
     loc = loc.replace(new RegExp(Object.keys(PRICE_KEYWORDS).join('|'), 'gi'), '').trim();
-    return loc || null;
+    const normalized = loc.toLowerCase().replace(/[.,!?:;]$/g, '').trim();
+    const vagueList = ['me', 'here', 'nearby', 'dito', 'rito', 'doon', 'dun'];
+    if (vagueList.includes(normalized)) return 'me';
+
+    // Return normalized (lowercase) location text so callers get a
+    // predictable, comparable value (e.g., 'bgc').
+    return normalized || null;
 }
 
-export function parseMessage(raw: string): ParsedSearch {
+function parseMessageFallback(raw: string): ParsedSearch {
     const message = (raw || '').toLowerCase();
 
     const cuisine = findCuisine(message);
@@ -55,6 +60,51 @@ export function parseMessage(raw: string): ParsedSearch {
         priceLevel: priceLevel ?? null,
         openNow,
     };
+}
+
+export async function parseMessage(raw: string): Promise<ParsedSearch> {
+    async function translateIfTagalog(text: string): Promise<{ text: string; detectedTagalog: boolean }> {
+        const customMap: Record<string, string> = {
+            malapit: 'near',
+            inumin: 'beverage',
+            inuman: 'beverage',
+            pagkain: 'food',
+            meryenda: 'snacks',
+            kapehan: 'coffee shop',
+            tindahan: 'store',
+        };
+
+        function applyCustomMappings(s: string) {
+            if (!s) return s;
+            const keys = Object.keys(customMap).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+            if (keys.length === 0) return s;
+            const re = new RegExp(`\\b(${keys.join('|')})\\b`, 'gi');
+            return s.replace(re, (m) => {
+                const lower = m.toLowerCase();
+                return customMap[lower] ?? m;
+            });
+        }
+
+        return { text: applyCustomMappings(text), detectedTagalog: false };
+    }
+
+    const translatedRes = await translateIfTagalog(raw);
+    const translated = translatedRes.text;
+    const detectedTagalog = translatedRes.detectedTagalog;
+    const shouldUseLLM =
+        process.env.USE_LLM_PARSE !== 'false' &&
+        process.env.NODE_ENV !== 'test' &&
+        !!process.env.GROQ_API_KEY;
+    const vagueNearRe = /\bnear\s+(me|here|nearby)\b/i;
+    if (shouldUseLLM && !(detectedTagalog && vagueNearRe.test(translated))) {
+        try {
+            const parsed = await llmParseMessage(translated);
+            return parsed;
+        } catch {
+        }
+    }
+
+    return parseMessageFallback(translated);
 }
 
 export default parseMessage;

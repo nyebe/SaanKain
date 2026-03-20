@@ -1,19 +1,50 @@
 import axios from 'axios';
 
 import { RestaurantResult } from '@/types/restaurant';
-import { ParsedSearch } from '@/types/search';
+import {
+    GeoCoords,
+    ParsedSearch,
+} from '@/types/search';
 
 import { createFoursquareClient } from './client';
 import {
-  FoursquarePlaceRaw,
-  transformPlace,
+    FoursquarePlaceRaw,
+    transformPlace,
 } from './transform';
 
 type FoursquareSearchResponse = {
     results: FoursquarePlaceRaw[];
 };
 
-function buildSearchParams(parsed: ParsedSearch): Record<string, string> {
+const LOCATION_NORMALIZATIONS: Array<[RegExp, string]> = [
+    [/^\s*bgc\b/i, 'BGC, Taguig'],
+    [/^\s*bonifacio/i, 'BGC, Taguig'],
+    [/^\s*sampaloc\b/i, 'Sampaloc, Manila'],
+    [/^\s*taft\b/i, 'Taft, Manila'],
+    [/^\s*q(\.)?c(\.)?$/i, 'Quezon City'],
+    [/^\s*quezon\s+city/i, 'Quezon City'],
+    [/^\s*makati/i, 'Makati'],
+    [/^\s*ortigas/i, 'Ortigas, Pasig'],
+];
+
+function normalizeLocationText(locationText: string): string {
+    const cleaned = locationText.trim();
+    if (!cleaned) return cleaned;
+
+    const hasCountry = /philippines/i.test(cleaned);
+    const hasComma = cleaned.includes(',');
+
+    for (const [pattern, replacement] of LOCATION_NORMALIZATIONS) {
+        if (pattern.test(cleaned)) {
+            return replacement + (hasCountry ? '' : ', Philippines');
+        }
+    }
+
+    if (hasCountry || hasComma) return cleaned;
+    return `${cleaned}, Philippines`;
+}
+
+function buildSearchParams(parsed: ParsedSearch, coords?: GeoCoords | null): Record<string, string> {
     const requestedFields = process.env.FOURSQUARE_FIELDS ?? 'fsq_place_id,name,location,categories,distance,date_closed';
     const defaultLimit = process.env.FOURSQUARE_RESULT_LIMIT ?? '10';
 
@@ -26,16 +57,26 @@ function buildSearchParams(parsed: ParsedSearch): Record<string, string> {
         params.query = parsed.cuisine;
     }
 
-    if (parsed.locationText) {
-        params.near = parsed.locationText;
+    const looksLikeNearMe = (text?: string | null) => {
+        if (!text) return false;
+        return /^\s*(me|near\s+me)\s*$/i.test(text.trim());
+    };
+
+    if (looksLikeNearMe(parsed.locationText)) {
+        if (coords) {
+            params.ll = `${coords.lat},${coords.lng}`;
+            params.sort = 'DISTANCE';
+        }
+    } else if (parsed.locationText) {
+        params.near = normalizeLocationText(parsed.locationText);
     }
 
     return params;
 }
 
-export async function searchPlaces(parsed: ParsedSearch): Promise<RestaurantResult[]> {
+export async function searchPlaces(parsed: ParsedSearch, coords?: GeoCoords | null): Promise<RestaurantResult[]> {
     const client = createFoursquareClient();
-    const params = buildSearchParams(parsed);
+    const params = buildSearchParams(parsed, coords);
 
     try {
         const response = await client.get<FoursquareSearchResponse>('/places/search', { params });
@@ -44,7 +85,9 @@ export async function searchPlaces(parsed: ParsedSearch): Promise<RestaurantResu
             return [];
         }
 
-        return response.data.results.map(transformPlace);
+        return response.data.results
+            .filter((place) => !place.date_closed)
+            .map(transformPlace);
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             const status = error.response.status;

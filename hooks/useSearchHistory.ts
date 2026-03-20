@@ -2,7 +2,6 @@
 
 import {
     useCallback,
-    useEffect,
     useState,
 } from 'react';
 
@@ -30,11 +29,7 @@ function writeToStorage(entries: SearchHistoryEntry[]): void {
 }
 
 export default function useSearchHistory() {
-    const [history, setHistory] = useState<SearchHistoryEntry[]>([]);
-
-    useEffect(() => {
-        setHistory(readFromStorage());
-    }, []);
+    const [history, setHistory] = useState<SearchHistoryEntry[]>(() => readFromStorage());
 
     const addEntry = useCallback((query: string) => {
         const trimmed = query.trim();

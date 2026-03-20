@@ -33,11 +33,9 @@ export default function HeroV2({
 
                         <div className="mt-8 flex flex-col items-center gap-6">
                             <div className="relative">
-                                <Button>
-                                    <a href="/">
-                                        Try a demo search
-                                    </a>
-                                </Button>
+                                <Link href="/" className="inline-block">
+                                    <Button>Try a demo search</Button>
+                                </Link>
                                 <div className="pointer-events-none absolute -inset-1 rounded-lg blur-xl opacity-30" />
                             </div>
 

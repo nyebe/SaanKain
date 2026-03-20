@@ -35,8 +35,25 @@ export default function useResults(coords: GeoCoords | null = null) {
 
     useEffect(() => {
         const msg = searchParams?.get('message');
-        if (!msg) return;
+        if (!msg) {
+            setResults([]);
+            setErrorMessage(null);
+            setVisibleCount(PAGE_SIZE);
+            setLoading(false);
+            return;
+        }
         const query = msg;
+
+        const nearMeRe = /\bnear\s+(me|here|nearby)\b/i;
+        if (nearMeRe.test(query) && !coords) {
+            setResults([]);
+            setErrorMessage(
+                'Could not find your location. Try turning on location (use the location button) so results are searched by your current location.'
+            );
+            setVisibleCount(PAGE_SIZE);
+            setLoading(false);
+            return;
+        }
 
         let mounted = true;
 
@@ -58,7 +75,7 @@ export default function useResults(coords: GeoCoords | null = null) {
                 } else {
                     setErrorMessage(response.error.message);
                 }
-            } catch (err) {
+            } catch {
                 if (!mounted) return;
                 setErrorMessage('Something went wrong while fetching results.');
             } finally {

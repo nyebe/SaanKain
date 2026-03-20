@@ -1,6 +1,6 @@
 import {
-  NextRequest,
-  NextResponse,
+    NextRequest,
+    NextResponse,
 } from 'next/server';
 
 import { searchPlaces } from '@/lib/foursquare/searchPlaces';
@@ -13,8 +13,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<ExecuteRes
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
     const message = searchParams.get('message');
+    const ll = searchParams.get('ll');
 
-    const validation = validateExecuteQuery(code, message);
+    const validation = validateExecuteQuery(code, message, ll);
 
     if (!validation.valid) {
         const httpStatus = validation.error.code === 'UNAUTHORIZED' ? 401 : 400;
@@ -24,11 +25,23 @@ export async function GET(request: NextRequest): Promise<NextResponse<ExecuteRes
         );
     }
 
-    const parsed = parseMessage(validation.message);
+    const parsed = await parseMessage(validation.message);
 
     try {
-        const results = await searchPlaces(parsed);
+        const results = await searchPlaces(parsed, validation.coords);
         const ranked = rankResults(results, parsed);
+        if (parsed.locationText && (!ranked || ranked.length === 0) && validation.coords == null) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: {
+                        code: 'LOCATION_SUGGESTION',
+                        message: 'Could not find your location. Try turning on location (use the location button) so results are searched by your current location.',
+                    },
+                },
+                { status: 400 }
+            );
+        }
 
         return NextResponse.json({
             success: true,
@@ -38,6 +51,20 @@ export async function GET(request: NextRequest): Promise<NextResponse<ExecuteRes
         });
     } catch (err) {
         const detail = err instanceof Error ? err.message : 'Unexpected error';
+
+        if (typeof detail === 'string' && /Boundaries could not be determined/i.test(detail)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: {
+                        code: 'LOCATION_SUGGESTION',
+                        message: 'Could not find your location. Try turning on location (use the location button) so results are searched by your current location.',
+                    },
+                },
+                { status: 400 }
+            );
+        }
+
         return NextResponse.json(
             {
                 success: false,

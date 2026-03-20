@@ -1,10 +1,9 @@
 "use client"
 
-import { useState } from 'react';
-
 import Image from 'next/image';
 import Link from 'next/link';
 
+import ThemeToggle from '@/components/toggles/ThemeToggle';
 import {
     Sheet,
     SheetClose,
@@ -13,10 +12,8 @@ import {
     SheetHeader,
     SheetTrigger,
 } from '@/components/ui/sheet';
-import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function NavBar() {
-    const [open, setOpen] = useState(false)
     const navItems = [
         { href: '/results', label: 'Results' },
         { href: '/about', label: 'About' },
@@ -83,7 +80,6 @@ export default function NavBar() {
 
                     <div className="hidden sm:flex items-center gap-2">
                         <ThemeToggle />
-                        <Link href="/" className="px-3 py-1 rounded-md bg-primary text-primary-foreground text-sm">Search</Link>
                     </div>
                 </div>
             </div>

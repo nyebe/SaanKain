@@ -3,6 +3,15 @@ export interface GeoCoords {
     lng: number;
 }
 
+export interface GeoLocation {
+    coords: GeoCoords;
+    displayName: string;
+    address?: Record<string, unknown> | null;
+    municipality?: string | null;
+    city?: string | null;
+    region?: string | null;
+    country?: string | null;
+}
 export interface ParsedSearch {
     cuisine?: string | null;
     locationText?: string | null;
