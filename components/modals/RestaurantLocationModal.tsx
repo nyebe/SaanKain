@@ -1,7 +1,6 @@
 "use client"
 
 import {
-    Car,
     ExternalLink,
     MapPin,
 } from 'lucide-react';
@@ -52,15 +51,6 @@ export default function RestaurantLocationModal({ restaurant, open, onClose }: R
                     >
                         <ExternalLink className="size-4" />
                         Open in Google Maps
-                    </a>
-                    <a
-                        href={grabUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={cn(buttonVariants({ variant: 'outline' }), 'w-full justify-start gap-2')}
-                    >
-                        <Car className="size-4" />
-                        Book a Grab
                     </a>
                 </div>
             </DialogContent>
