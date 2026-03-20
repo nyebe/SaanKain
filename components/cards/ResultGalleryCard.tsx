@@ -19,7 +19,7 @@ export default function ResultGalleryCard({
     onBookmark?: () => void;
 }) {
     const category = item.categories && item.categories.length ? item.categories[0].name : null;
-    const locationText = [item.location?.locality, item.location?.address].filter(Boolean).join(' Â· ');
+    const locationText = [item.location?.locality, item.location?.address].filter(Boolean).join(' · ');
     const distanceText =
         item.distance == null
             ? null
