@@ -121,7 +121,7 @@ export default function useGeoLocation() {
                     } else {
                         setLocation(null);
                     }
-                } catch (err) {
+                } catch {
                     setLocation(null);
                 } finally {
                     setResolving(false);

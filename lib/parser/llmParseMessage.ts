@@ -51,7 +51,7 @@ If unsure, prefer null/false. Respond with JSON only, no prose.`;
     let parsed: unknown;
     try {
         parsed = JSON.parse(content);
-    } catch (err) {
+    } catch {
         throw new Error('LLM response was not valid JSON');
     }
 

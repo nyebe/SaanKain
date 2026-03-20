@@ -101,8 +101,7 @@ export async function parseMessage(raw: string): Promise<ParsedSearch> {
         try {
             const parsed = await llmParseMessage(translated);
             return parsed;
-        } catch (err) {
-            // fall through to regex fallback
+        } catch {
         }
     }
 

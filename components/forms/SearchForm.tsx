@@ -21,7 +21,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { SearchFormProps } from '@/types/ui';
 
 export default function SearchForm({ message, onChange, onSubmit, disabled = false,
-  useLocation, toggleLocation, coords, resolving, locationError,
+  useLocation, toggleLocation, coords,
 }: SearchFormProps) {
   const router = useRouter();
   const [randomVariant, setRandomVariant] = useState<string>('all');

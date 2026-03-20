@@ -22,7 +22,6 @@ export default function RestaurantLocationModal({ restaurant, open, onClose }: R
         .filter(Boolean)
         .join(', ');
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
-    const grabUrl = 'https://www.grab.com/ph/transport/';
 
     return (
         <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>

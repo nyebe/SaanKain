@@ -1,6 +1,7 @@
 "use client"
 
 import { HeartIcon } from 'lucide-react';
+import Image from 'next/image';
 
 import { Card } from '@/components/ui/card';
 import { FoursquarePlace } from '@/types/restaurant';
@@ -44,7 +45,9 @@ export default function ResultListCard({
         </button>
       )}
       <div className="flex items-start gap-3">
-        <img src={avatarUrl} alt={item.name} className="w-12 h-12 rounded-md shrink-0 bg-muted/10" />
+        <div className="w-12 h-12 rounded-md shrink-0 bg-muted/10 overflow-hidden">
+          <Image src={avatarUrl} alt={item.name} width={48} height={48} />
+        </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 justify-between w-full">

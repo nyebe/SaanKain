@@ -2,6 +2,7 @@
 
 import ResultGalleryCard from '@/components/cards/ResultGalleryCard';
 import ResultListCard from '@/components/cards/ResultListCard';
+import { RestaurantResult } from '@/types/restaurant';
 import {
   ResultsListProps,
   ViewMode,
@@ -16,9 +17,18 @@ export default function ResultsList({ results, view = 'list', onSelect, isBookma
 
   return (
     <div className={containerClass}>
-      {results.map((item) => {
+      {results.map((item: RestaurantResult) => {
+        const legacy = item as unknown as Record<string, unknown>;
+        const fsq_place_id =
+          item.fsqId ??
+          (typeof legacy.fsq_place_id === 'string'
+            ? (legacy.fsq_place_id as string)
+            : typeof legacy.fsq_id === 'string'
+            ? (legacy.fsq_id as string)
+            : String(legacy.id ?? ''));
+
         const minimal = {
-          fsq_place_id: (item as any).fsqId || (item as any).fsq_place_id || (item as any).fsq_id || String((item as any).id || ''),
+          fsq_place_id,
           name: item.name,
           location: {
             address: item.address ?? null,

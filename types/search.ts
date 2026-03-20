@@ -6,8 +6,7 @@ export interface GeoCoords {
 export interface GeoLocation {
     coords: GeoCoords;
     displayName: string;
-    // optional raw address object returned by Nominatim
-    address?: Record<string, any> | null;
+    address?: Record<string, unknown> | null;
     municipality?: string | null;
     city?: string | null;
     region?: string | null;

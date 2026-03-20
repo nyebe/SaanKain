@@ -1,9 +1,9 @@
 "use client";
 
 import React, {
-  useEffect,
-  useRef,
-  useState,
+    useEffect,
+    useRef,
+    useState,
 } from 'react';
 
 import { useTheme } from 'next-themes';
@@ -32,6 +32,7 @@ export default function ClientLoadingGate() {
         }
 
         // show on client navigations briefly
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
         const t = setTimeout(() => setLoading(false), 450);
         return () => clearTimeout(t);
@@ -39,7 +40,9 @@ export default function ClientLoadingGate() {
 
     // use next-themes resolvedTheme when available
     useEffect(() => {
-        if (resolvedTheme) setTheme(resolvedTheme === 'dark' ? 'dark' : 'light');
+        if (resolvedTheme)
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setTheme(resolvedTheme === 'dark' ? 'dark' : 'light');
     }, [resolvedTheme]);
 
     return <LoadingScreen visible={loading} theme={theme} />;

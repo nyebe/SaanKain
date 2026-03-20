@@ -75,7 +75,7 @@ export default function useResults(coords: GeoCoords | null = null) {
                 } else {
                     setErrorMessage(response.error.message);
                 }
-            } catch (err) {
+            } catch {
                 if (!mounted) return;
                 setErrorMessage('Something went wrong while fetching results.');
             } finally {
