@@ -1,11 +1,16 @@
 "use client"
 
-import * as React from 'react'
-import { cn } from '@/lib/utils';
+import * as React from 'react';
+
+import {
+    ArrowDown,
+    ArrowUp,
+} from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { NativeSelect } from '@/components/ui/native-select';
+import { cn } from '@/lib/utils';
 import { SortControlProps } from '@/types/ui';
-import { ArrowUp, ArrowDown } from 'lucide-react';
 
 export default function SortControl({ field, direction, onChange, className }: SortControlProps) {
     function handleFieldChange(e: React.ChangeEvent<HTMLSelectElement>) {

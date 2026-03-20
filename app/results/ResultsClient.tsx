@@ -8,8 +8,8 @@ import {
 
 import { MapPin } from 'lucide-react';
 
-import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
 import SortControl from '@/components/buttonGroup/SortControl';
+import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
 import SearchForm from '@/components/forms/SearchForm';
 import RestaurantLocationModal
     from '@/components/modals/RestaurantLocationModal';

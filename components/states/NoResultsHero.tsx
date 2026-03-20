@@ -10,7 +10,7 @@ type Props = {
 
 const suggestions = [
     'sushi near makati',
-    'ramen near bgc',
+    'coffee near bgc',
     'bbq near quezon city',
     'best pizza near me',
 ];

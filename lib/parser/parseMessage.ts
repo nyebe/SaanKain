@@ -40,6 +40,10 @@ function findLocation(message: string): string | null {
     const normalized = loc.toLowerCase().replace(/[.,!?:;]$/g, '').trim();
     const vagueList = ['me', 'here', 'nearby', 'dito', 'rito', 'doon', 'dun'];
     if (vagueList.includes(normalized)) return 'me';
+
+    // Normalize common abbreviations to full place names
+    if (normalized === 'bgc') return 'Bonifacio Global City';
+
     return loc || null;
 }
 
@@ -82,33 +86,7 @@ export async function parseMessage(raw: string): Promise<ParsedSearch> {
             });
         }
 
-        let detected = false;
-        try {
-            const mod: any = await import('anylang');
-            const detect = mod.detect ?? mod.default?.detect;
-            const translate = mod.translate ?? mod.default?.translate;
-            if (typeof detect === 'function') {
-                const lang = await detect(text);
-                if (lang && (lang === 'tl' || lang === 'fil' || String(lang).startsWith('tl') || String(lang).startsWith('fil') || String(lang).toLowerCase().startsWith('tag'))) {
-                    detected = true;
-                    if (typeof translate === 'function') {
-                        try {
-                            const maybe = await translate(text, 'en');
-                            if (typeof maybe === 'string' && maybe.trim()) return { text: applyCustomMappings(maybe), detectedTagalog: detected };
-                        } catch {
-                            try {
-                                const maybe2 = await translate(text, { to: 'en' });
-                                if (typeof maybe2 === 'string' && maybe2.trim()) return { text: applyCustomMappings(maybe2), detectedTagalog: detected };
-                            } catch {
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (err) {
-        }
-
-        return { text: applyCustomMappings(text), detectedTagalog: detected };
+        return { text: applyCustomMappings(text), detectedTagalog: false };
     }
 
     const translatedRes = await translateIfTagalog(raw);

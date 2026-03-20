@@ -48,11 +48,6 @@ export default function BookmarksSheet({
                 <div className="flex items-center justify-between px-4 py-3 border-b">
                     <div className="flex items-center gap-2">
                         <span className="font-semibold text-sm">Saved</span>
-                        {bookmarks.length > 0 && (
-                            <span className="text-xs text-muted-foreground">
-                                {bookmarks.length}/20
-                            </span>
-                        )}
                     </div>
                     <div className="flex items-center gap-1">
                         {bookmarks.length > 0 && (

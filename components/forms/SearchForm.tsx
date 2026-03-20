@@ -41,9 +41,9 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
         'random food',
         'best local food',
       ],
-      chill: ['bar', 'coffee shop', 'chill cafe', 'cocktail bar', 'coffee'],
-      kanin: ['rice meals', 'silog', 'sisig', 'adobo', 'plate meals'],
-      meryenda: ['snacks', 'merienda', 'pasalubong', 'kakanin', 'turon'],
+      chill: ['burger', 'coffee shop', 'convenience store', 'cocktail bar', 'pizza'],
+      kanin: ['rice meals', 'restaurant', 'shop', 'fast food', 'plate meals'],
+      meryenda: ['snacks', 'merienda', 'bakery', 'pastries', 'dessert'],
       drinks: ['beverages', 'milk tea', 'fresh juice', 'coffee', 'drinks'],
     } as Record<string, string[]>;
 
@@ -52,6 +52,11 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
     const base = pick;
     if (coords) return `${base} near me`;
     return base;
+  }
+
+  function normalizeInput(input: string) {
+    if (!input) return input;
+    return input.replace(/\bbgc\b/gi, 'Bonifacio Global City');
   }
 
   const handleRandom = (variantKey?: string) => {
@@ -84,12 +89,12 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
         <span className="text-sm font-medium self-center">What are you looking for?</span>
         <Textarea
           value={message}
-          onChange={(changeEvent: ChangeEvent<HTMLTextAreaElement>) => onChange(changeEvent.target.value)}
+          onChange={(changeEvent: ChangeEvent<HTMLTextAreaElement>) => onChange(normalizeInput(changeEvent.target.value))}
           onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
               if (onSubmit) onSubmit();
-              const query = message ? `?message=${encodeURIComponent(message)}` : '';
+              const query = message ? `?message=${encodeURIComponent(normalizeInput(message))}` : '';
               router.push(`/results${query}`);
             }
           }}
