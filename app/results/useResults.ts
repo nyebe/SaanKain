@@ -1,14 +1,14 @@
 "use client"
 
 import {
-  useEffect,
-  useRef,
-  useState,
+    useEffect,
+    useRef,
+    useState,
 } from 'react';
 
 import {
-  useRouter,
-  useSearchParams,
+    useRouter,
+    useSearchParams,
 } from 'next/navigation';
 
 import useSearchHistory from '@/hooks/useSearchHistory';
@@ -43,6 +43,17 @@ export default function useResults(coords: GeoCoords | null = null) {
             return;
         }
         const query = msg;
+
+        const nearMeRe = /\bnear\s+(me|here|nearby)\b/i;
+        if (nearMeRe.test(query) && !coords) {
+            setResults([]);
+            setErrorMessage(
+                'Could not find your location. Try turning on location (use the location button) so results are searched by your current location.'
+            );
+            setVisibleCount(PAGE_SIZE);
+            setLoading(false);
+            return;
+        }
 
         let mounted = true;
 
