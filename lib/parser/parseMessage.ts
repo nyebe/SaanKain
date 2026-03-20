@@ -2,9 +2,9 @@ import { ParsedSearch } from '@/types/search';
 
 import llmParseMessage from './llmParseMessage';
 import {
-  CUISINES,
-  OPEN_NOW_PATTERNS,
-  PRICE_KEYWORDS,
+    CUISINES,
+    OPEN_NOW_PATTERNS,
+    PRICE_KEYWORDS,
 } from './rules';
 
 function findCuisine(message: string): string | null {
@@ -35,10 +35,11 @@ function findLocation(message: string): string | null {
     const m = message.match(nearRe);
     if (!m) return null;
     let loc = m[1].trim();
-    // strip trailing keywords
     loc = loc.replace(/\b(open now|open|restaurant|restaurants)\b/gi, '').trim();
-    // remove any trailing price words
     loc = loc.replace(new RegExp(Object.keys(PRICE_KEYWORDS).join('|'), 'gi'), '').trim();
+    const normalized = loc.toLowerCase().replace(/[.,!?:;]$/g, '').trim();
+    const ignoreList = ['me', 'here', 'nearby', 'dito', 'rito', 'doon', 'dun'];
+    if (ignoreList.includes(normalized)) return null;
     return loc || null;
 }
 
@@ -59,21 +60,75 @@ function parseMessageFallback(raw: string): ParsedSearch {
 }
 
 export async function parseMessage(raw: string): Promise<ParsedSearch> {
+    async function translateIfTagalog(text: string): Promise<{ text: string; detectedTagalog: boolean }> {
+        const customMap: Record<string, string> = {
+            malapit: 'near',
+            inumin: 'beverage',
+            inuman: 'beverage',
+            pagkain: 'food',
+            meryenda: 'snacks',
+            kapehan: 'coffee shop',
+            tindahan: 'store',
+        };
+
+        function applyCustomMappings(s: string) {
+            if (!s) return s;
+            const keys = Object.keys(customMap).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+            if (keys.length === 0) return s;
+            const re = new RegExp(`\\b(${keys.join('|')})\\b`, 'gi');
+            return s.replace(re, (m) => {
+                const lower = m.toLowerCase();
+                return customMap[lower] ?? m;
+            });
+        }
+
+        let detected = false;
+        try {
+            const mod: any = await import('anylang');
+            const detect = mod.detect ?? mod.default?.detect;
+            const translate = mod.translate ?? mod.default?.translate;
+            if (typeof detect === 'function') {
+                const lang = await detect(text);
+                if (lang && (lang === 'tl' || lang === 'fil' || String(lang).startsWith('tl') || String(lang).startsWith('fil') || String(lang).toLowerCase().startsWith('tag'))) {
+                    detected = true;
+                    if (typeof translate === 'function') {
+                        try {
+                            const maybe = await translate(text, 'en');
+                            if (typeof maybe === 'string' && maybe.trim()) return { text: applyCustomMappings(maybe), detectedTagalog: detected };
+                        } catch {
+                            try {
+                                const maybe2 = await translate(text, { to: 'en' });
+                                if (typeof maybe2 === 'string' && maybe2.trim()) return { text: applyCustomMappings(maybe2), detectedTagalog: detected };
+                            } catch {
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+        }
+
+        return { text: applyCustomMappings(text), detectedTagalog: detected };
+    }
+
+    const translatedRes = await translateIfTagalog(raw);
+    const translated = translatedRes.text;
+    const detectedTagalog = translatedRes.detectedTagalog;
     const shouldUseLLM =
         process.env.USE_LLM_PARSE !== 'false' &&
         process.env.NODE_ENV !== 'test' &&
         !!process.env.GROQ_API_KEY;
-
-    if (shouldUseLLM) {
+    const vagueNearRe = /\bnear\s+(me|here|nearby)\b/i;
+    if (shouldUseLLM && !(detectedTagalog && vagueNearRe.test(translated))) {
         try {
-            const parsed = await llmParseMessage(raw);
+            const parsed = await llmParseMessage(translated);
             return parsed;
         } catch (err) {
             // fall through to regex fallback
         }
     }
 
-    return parseMessageFallback(raw);
+    return parseMessageFallback(translated);
 }
 
 export default parseMessage;

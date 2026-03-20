@@ -1,6 +1,7 @@
 import { RestaurantResult } from '@/types/restaurant';
 import {
     BookmarkedRestaurant,
+    GeoCoords,
     SearchHistoryEntry,
 } from '@/types/search';
 
@@ -15,6 +16,11 @@ export interface SearchFormProps {
     onChange: (v: string) => void;
     onSubmit: () => void;
     disabled?: boolean;
+    useLocation?: boolean;
+    toggleLocation?: () => void;
+    coords?: GeoCoords | null;
+    resolving?: boolean;
+    locationError?: string | null;
 }
 
 export interface ErrorStateProps {

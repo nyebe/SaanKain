@@ -18,16 +18,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Textarea } from '@/components/ui/textarea';
-import useGeoLocation from '@/hooks/useGeoLocation';
 import { SearchFormProps } from '@/types/ui';
 
-export default function SearchForm({ message, onChange, onSubmit, disabled = false }: SearchFormProps) {
+export default function SearchForm({ message, onChange, onSubmit, disabled = false,
+  useLocation, toggleLocation, coords, resolving, locationError,
+}: SearchFormProps) {
   const router = useRouter();
-  const { useLocation, toggleLocation } = useGeoLocation();
   const [randomVariant, setRandomVariant] = useState<string>('all');
 
   const randomOptions: { key: string; label: string }[] = [
-    { key: 'all', label: 'Ikaw bahala' },
     { key: 'chill', label: 'Ikaw bahala basta chill' },
     { key: 'kanin', label: 'Ikaw bahala basta may kanin' },
     { key: 'meryenda', label: 'Ikaw bahala basta meryenda' },
@@ -39,7 +38,6 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
       all: [
         'pagkain',
         'kainan',
-        'pinakasarap na ulam',
         'random food',
         'best local food',
       ],
@@ -51,13 +49,14 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
 
     const pool = topics[variant] ?? topics.all;
     const pick = pool[Math.floor(Math.random() * pool.length)];
-    // Prefer 'near me' so that location toggle affects results
-    return `${pick} near me`;
+    const base = pick;
+    if (coords) return `${base} near me`;
+    return base;
   }
 
   const handleRandom = (variantKey?: string) => {
     const v = variantKey ?? randomVariant ?? 'all';
-    if (!useLocation) {
+    if (!useLocation && toggleLocation) {
       try {
         toggleLocation();
       } catch {
@@ -126,21 +125,19 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
           <Button
             type="button"
             onClick={() => handleRandom()}
-            className="rounded-r-none px-4"
+            className="rounded-r-none px-4 "
           >
             Ikaw bahala
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <Button
-                type="button"
-                variant="ghost"
-                className="rounded-l-none px-2 dark:bg-white/90 dark:hover:bg-white/80 bg-black hover:bg-black"
+              <div
+                className="px-2 dark:bg-white/90 dark:hover:bg-white/80 bg-black hover:bg-black py-2 rounded-l-none rounded-lg"
                 aria-label="Random options"
               >
                 <ChevronDown className="w-4 h-4 dark:text-black text-white" />
-              </Button>
+              </div>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent>

@@ -1,9 +1,9 @@
 "use client"
 
 import {
-  useEffect,
-  useRef,
-  useState,
+    useEffect,
+    useRef,
+    useState,
 } from 'react';
 
 import { MapPin } from 'lucide-react';
@@ -11,7 +11,7 @@ import { MapPin } from 'lucide-react';
 import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
 import SearchForm from '@/components/forms/SearchForm';
 import RestaurantLocationModal
-  from '@/components/modals/RestaurantLocationModal';
+    from '@/components/modals/RestaurantLocationModal';
 import BookmarksSheet from '@/components/sheets/BookmarksSheet';
 import SearchHistorySheet from '@/components/sheets/SearchHistorySheet';
 import ErrorState from '@/components/states/ErrorState';
@@ -132,6 +132,11 @@ export default function ResultsClient() {
                             onChange={setMessage}
                             onSubmit={handleSubmit}
                             disabled={loading}
+                            useLocation={useLocation}
+                            toggleLocation={toggleLocation}
+                            coords={coords}
+                            resolving={resolving}
+                            locationError={locationError}
                         />
                     </div>
                 </div>
