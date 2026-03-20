@@ -2,14 +2,14 @@ import axios from 'axios';
 
 import { RestaurantResult } from '@/types/restaurant';
 import {
-  GeoCoords,
-  ParsedSearch,
+    GeoCoords,
+    ParsedSearch,
 } from '@/types/search';
 
 import { createFoursquareClient } from './client';
 import {
-  FoursquarePlaceRaw,
-  transformPlace,
+    FoursquarePlaceRaw,
+    transformPlace,
 } from './transform';
 
 type FoursquareSearchResponse = {
@@ -58,13 +58,15 @@ function buildSearchParams(parsed: ParsedSearch, coords?: GeoCoords | null): Rec
     }
 
     const looksLikeNearMe = (text?: string | null) => {
-        if (!text) return true;
+        if (!text) return false;
         return /^\s*(me|near\s+me)\s*$/i.test(text.trim());
     };
 
-    if (coords && looksLikeNearMe(parsed.locationText)) {
-        params.ll = `${coords.lat},${coords.lng}`;
-        params.sort = 'DISTANCE';
+    if (looksLikeNearMe(parsed.locationText)) {
+        if (coords) {
+            params.ll = `${coords.lat},${coords.lng}`;
+            params.sort = 'DISTANCE';
+        }
     } else if (parsed.locationText) {
         params.near = normalizeLocationText(parsed.locationText);
     }
