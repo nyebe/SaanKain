@@ -1,11 +1,12 @@
 "use client";
 
 import React, {
-    useEffect,
-    useRef,
-    useState,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 
+import { useTheme } from 'next-themes';
 import { usePathname } from 'next/navigation';
 
 import LoadingScreen from './LoadingScreen';
@@ -14,6 +15,8 @@ export default function ClientLoadingGate() {
     const pathname = usePathname();
     const [loading, setLoading] = useState(true);
     const firstRef = useRef(true);
+    const [theme, setTheme] = useState<"dark" | "light">("dark");
+    const { resolvedTheme } = useTheme();
 
     useEffect(() => {
         // initial first-load show
@@ -34,5 +37,10 @@ export default function ClientLoadingGate() {
         return () => clearTimeout(t);
     }, [pathname]);
 
-    return <LoadingScreen visible={loading} theme="dark" />;
+    // use next-themes resolvedTheme when available
+    useEffect(() => {
+        if (resolvedTheme) setTheme(resolvedTheme === 'dark' ? 'dark' : 'light');
+    }, [resolvedTheme]);
+
+    return <LoadingScreen visible={loading} theme={theme} />;
 }
