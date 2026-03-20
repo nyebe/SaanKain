@@ -49,7 +49,6 @@ export default function ResultsClient() {
         errorMessage,
         results: allResults,
         visibleResults: hookVisibleResults,
-        hasMore: hookHasMore,
         loadMore,
         handleSubmit,
         history,
@@ -70,28 +69,33 @@ export default function ResultsClient() {
 
     const visibleResults = filteredResults.slice(0, hookVisibleResults.length);
     const hasMore = visibleResults.length < filteredResults.length;
-    const [view, setView] = useState<ViewMode>('list');
-    const sentinelRef = useRef<HTMLDivElement>(null);
-    const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>('name');
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-
-    useEffect(() => {
+    const [view, setView] = useState<ViewMode>(() => {
         try {
             const v = localStorage.getItem('saankain_view') as ViewMode | null;
-            if (v) setView(v);
+            return v ?? 'list';
         } catch {
+            return 'list';
         }
+    });
+    const sentinelRef = useRef<HTMLDivElement>(null);
+    const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>(() => {
         try {
             const sf = localStorage.getItem('saankain_sort_field') as 'name' | 'type' | 'distance' | null;
-            if (sf) setSortField(sf);
+            return sf ?? 'name';
         } catch {
+            return 'name';
         }
+    });
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
         try {
             const sd = localStorage.getItem('saankain_sort_direction') as 'asc' | 'desc' | null;
-            if (sd) setSortDirection(sd);
+            return sd ?? 'asc';
         } catch {
+            return 'asc';
         }
-    }, []);
+    });
+
+
 
     useEffect(() => {
         const sentinel = sentinelRef.current;

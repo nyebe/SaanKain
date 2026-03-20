@@ -34,7 +34,7 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
   ];
 
   function makeRandomMessage(variant: string) {
-    let topics = {
+    const topics = {
       chill: ['burger', 'coffee shop', 'convenience store', 'cocktail bar', 'pizza'],
       kanin: ['restaurant', 'shop', 'fast food', 'plate meals', 'chicken'],
       meryenda: ['snacks', 'merienda', 'bakery', 'pastries', 'dessert', 'ice cream', 'street food'],
