@@ -6,7 +6,10 @@ import {
     useState,
 } from 'react';
 
-import { MapPin } from 'lucide-react';
+import {
+    Filter,
+    MapPin,
+} from 'lucide-react';
 
 import SortControl from '@/components/buttonGroup/SortControl';
 import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
@@ -19,6 +22,12 @@ import ErrorState from '@/components/states/ErrorState';
 import LoadingState from '@/components/states/LoadingState';
 import NoResultsHero from '@/components/states/NoResultsHero';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
 import ResultsList from '@/components/views/ResultsList';
 import useBookmarks from '@/hooks/useBookmarks';
@@ -38,8 +47,9 @@ export default function ResultsClient() {
         setMessage,
         loading,
         errorMessage,
-        visibleResults,
-        hasMore,
+        results: allResults,
+        visibleResults: hookVisibleResults,
+        hasMore: hookHasMore,
         loadMore,
         handleSubmit,
         history,
@@ -47,6 +57,19 @@ export default function ResultsClient() {
         clearHistory,
         selectHistoryEntry,
     } = useResults(coords);
+
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(['all']);
+
+    const categories = Array.from(
+        new Set(allResults.map((r) => r.category).filter(Boolean) as string[])
+    ).sort();
+
+    const filteredResults = selectedCategories.includes('all')
+        ? allResults
+        : allResults.filter((r) => (r.category ? selectedCategories.includes(r.category) : false));
+
+    const visibleResults = filteredResults.slice(0, hookVisibleResults.length);
+    const hasMore = visibleResults.length < filteredResults.length;
     const [view, setView] = useState<ViewMode>('list');
     const sentinelRef = useRef<HTMLDivElement>(null);
     const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>('name');
@@ -185,6 +208,41 @@ export default function ResultsClient() {
                                     try { localStorage.setItem('saankain_sort_field', field); localStorage.setItem('saankain_sort_direction', dir); } catch { }
                                 }}
                             />
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                    <div aria-label="Filter results">
+                                        <Filter className="h-4 w-4" />
+                                    </div>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent sideOffset={8} className="min-w-[160px]">
+                                    <DropdownMenuCheckboxItem
+                                        checked={selectedCategories.includes('all')}
+                                        onCheckedChange={(v) => {
+                                            if (v) setSelectedCategories(['all']);
+                                        }}
+                                    >
+                                        All
+                                    </DropdownMenuCheckboxItem>
+                                    {categories.map((c) => (
+                                        <DropdownMenuCheckboxItem
+                                            key={c}
+                                            checked={selectedCategories.includes(c)}
+                                            onCheckedChange={(v) => {
+                                                setSelectedCategories((prev) => {
+                                                    const next = prev.filter((x) => x !== 'all');
+                                                    if (v) {
+                                                        return Array.from(new Set([...next, c]));
+                                                    }
+                                                    const removed = next.filter((x) => x !== c);
+                                                    return removed.length === 0 ? ['all'] : removed;
+                                                });
+                                            }}
+                                        >
+                                            {c}
+                                        </DropdownMenuCheckboxItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                             <ViewModeToggle
                                 view={view}
                                 onChange={(v) => {
