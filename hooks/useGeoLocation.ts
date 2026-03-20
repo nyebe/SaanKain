@@ -12,35 +12,34 @@ import {
 } from '@/types/search';
 
 export default function useGeoLocation() {
-    const [useLocation, setUseLocation] = useState<boolean>(() => {
-        try {
-            return localStorage.getItem('saan_useLocation') === 'true';
-        } catch {
-            return false;
-        }
-    });
+    const [useLocation, setUseLocation] = useState<boolean>(false);
 
-    const [coords, setCoords] = useState<GeoCoords | null>(() => {
-        try {
-            const s = localStorage.getItem('saan_coords');
-            if (!s) return null;
-            const p = JSON.parse(s);
-            if (p && typeof p.lat === 'number' && typeof p.lng === 'number') return { lat: p.lat, lng: p.lng };
-        } catch {
-            // ignore
-        }
-        return null;
-    });
+    const [coords, setCoords] = useState<GeoCoords | null>(null);
 
-    const [location, setLocation] = useState<GeoLocation | null>(() => {
+    const [location, setLocation] = useState<GeoLocation | null>(null);
+
+    useEffect(() => {
         try {
-            const s = localStorage.getItem('saan_location');
-            if (!s) return null;
-            return JSON.parse(s);
+            const storedUse = localStorage.getItem('saan_useLocation');
+            if (storedUse === 'true') setUseLocation(true);
+
+            const sCoords = localStorage.getItem('saan_coords');
+            if (sCoords) {
+                const p = JSON.parse(sCoords);
+                if (p && typeof p.lat === 'number' && typeof p.lng === 'number') setCoords({ lat: p.lat, lng: p.lng });
+            }
+
+            const sLoc = localStorage.getItem('saan_location');
+            if (sLoc) {
+                try {
+                    const parsed = JSON.parse(sLoc);
+                    setLocation(parsed);
+                } catch {
+                }
+            }
         } catch {
-            return null;
         }
-    });
+    }, []);
     const [locationError, setLocationError] = useState<string | null>(null);
     const [resolving, setResolving] = useState<boolean>(false);
 
@@ -81,7 +80,6 @@ export default function useGeoLocation() {
                     localStorage.setItem('saan_useLocation', 'true');
                     localStorage.setItem('saan_coords', JSON.stringify(newCoords));
                 } catch {
-                    // ignore
                 }
 
                 try {
@@ -97,8 +95,11 @@ export default function useGeoLocation() {
                         const displayName = data?.display_name ?? '';
                         const addr = data?.address ?? {};
 
-                        const municipality = addr.town ?? addr.municipality ?? addr.village ?? addr.city_district ?? addr.county ?? null;
-                        const city = addr.city ?? addr.town ?? addr.village ?? null;
+                        const municipality = addr.municipality ?? addr.town ?? addr.village ?? addr.county ?? null;
+                        const barangay = addr.suburb ?? addr.neighbourhood ?? addr.hamlet ?? addr.village ?? addr.barangay ?? null;
+                        const town = addr.town ?? null;
+                        const cityDistrict = addr.city_district ?? null;
+                        const city = addr.city ?? null;
                         const region = addr.state ?? addr.region ?? addr.county ?? null;
                         const country = addr.country ?? null;
 
@@ -107,6 +108,9 @@ export default function useGeoLocation() {
                             displayName,
                             address: addr,
                             municipality,
+                            barangay,
+                            town,
+                            cityDistrict,
                             city,
                             region,
                             country,
@@ -135,7 +139,6 @@ export default function useGeoLocation() {
         );
     }, [useLocation]);
 
-    // Keep localStorage in sync if coords/useLocation change externally
     useEffect(() => {
         try {
             if (useLocation) {

@@ -34,18 +34,14 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
   ];
 
   function makeRandomMessage(variant: string) {
-    const topics = {
-      all: [
-        'pagkain',
-        'kainan',
-        'random food',
-        'best local food',
-      ],
+    let topics = {
       chill: ['burger', 'coffee shop', 'convenience store', 'cocktail bar', 'pizza'],
-      kanin: ['rice meals', 'restaurant', 'shop', 'fast food', 'plate meals'],
-      meryenda: ['snacks', 'merienda', 'bakery', 'pastries', 'dessert'],
-      drinks: ['beverages', 'milk tea', 'fresh juice', 'coffee', 'drinks'],
+      kanin: ['restaurant', 'shop', 'fast food', 'plate meals', 'chicken'],
+      meryenda: ['snacks', 'merienda', 'bakery', 'pastries', 'dessert', 'ice cream', 'street food'],
+      drinks: ['beverages', 'milk tea', 'fresh juice', 'coffee', 'drinks', 'tea'],
     } as Record<string, string[]>;
+
+    topics.all = Object.values(topics).flat();
 
     const pool = topics[variant] ?? topics.all;
     const pick = pool[Math.floor(Math.random() * pool.length)];

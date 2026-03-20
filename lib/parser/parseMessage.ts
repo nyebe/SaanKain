@@ -99,6 +99,10 @@ export async function parseMessage(raw: string): Promise<ParsedSearch> {
     if (shouldUseLLM && !(detectedTagalog && vagueNearRe.test(translated))) {
         try {
             const parsed = await llmParseMessage(translated);
+            if (!parsed.locationText && vagueNearRe.test(translated)) {
+                parsed.locationText = 'me';
+            }
+
             return parsed;
         } catch {
         }

@@ -47,21 +47,28 @@ export default function ResultsClient() {
         clearHistory,
         selectHistoryEntry,
     } = useResults(coords);
-    const [view, setView] = useState<ViewMode>(() => {
+    const [view, setView] = useState<ViewMode>('list');
+    const sentinelRef = useRef<HTMLDivElement>(null);
+    const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>('name');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+    useEffect(() => {
         try {
             const v = localStorage.getItem('saankain_view') as ViewMode | null;
-            return v ?? 'list';
+            if (v) setView(v);
         } catch {
-            return 'list';
         }
-    });
-    const sentinelRef = useRef<HTMLDivElement>(null);
-    const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>(() => {
-        try { return (localStorage.getItem('saankain_sort_field') as 'name' | 'type' | 'distance') ?? 'name'; } catch { return 'name'; }
-    });
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
-        try { return (localStorage.getItem('saankain_sort_direction') as 'asc' | 'desc') ?? 'asc'; } catch { return 'asc'; }
-    });
+        try {
+            const sf = localStorage.getItem('saankain_sort_field') as 'name' | 'type' | 'distance' | null;
+            if (sf) setSortField(sf);
+        } catch {
+        }
+        try {
+            const sd = localStorage.getItem('saankain_sort_direction') as 'asc' | 'desc' | null;
+            if (sd) setSortDirection(sd);
+        } catch {
+        }
+    }, []);
 
     useEffect(() => {
         const sentinel = sentinelRef.current;
@@ -86,50 +93,63 @@ export default function ResultsClient() {
     return (
         <main className="p-6">
             <div className="mx-auto max-w-3xl">
-                <div className="flex items-center mb-6 gap-4">
-                    <SearchHistorySheet
-                        history={history}
-                        onSelect={selectHistoryEntry}
-                        onRemove={removeEntry}
-                        onClear={clearHistory}
-                    />
-                    <BookmarksSheet
-                        bookmarks={bookmarks}
-                        onSelect={(bookmarked) => setSelectedRestaurant({
-                            fsqId: bookmarked.fsqId,
-                            name: bookmarked.name,
-                            address: bookmarked.address,
-                            locality: bookmarked.locality,
-                            region: bookmarked.region,
-                            category: bookmarked.category,
-                        })}
-                        onRemove={removeBookmark}
-                        onClear={clearBookmarks}
-                    />
-                    <Button
-                        type="button"
-                        variant={useLocation ? 'default' : 'outline'}
-                        size="icon"
-                        onClick={toggleLocation}
-                        disabled={resolving}
-                        title={useLocation ? 'Location active — click to disable' : 'Use my location'}
-                        aria-label="Toggle location search"
-                        className="shrink-0"
-                    >
-                        {resolving ? (
-                            <Spinner className="size-4" />
-                        ) : (
-                            <MapPin className="size-4" />
-                        )}
-                    </Button>
+                <div className="mb-6">
+                    <div className="flex items-center gap-2">
+                        <SearchHistorySheet
+                            history={history}
+                            onSelect={selectHistoryEntry}
+                            onRemove={removeEntry}
+                            onClear={clearHistory}
+                        />
+                        <BookmarksSheet
+                            bookmarks={bookmarks}
+                            onSelect={(bookmarked) => setSelectedRestaurant({
+                                fsqId: bookmarked.fsqId,
+                                name: bookmarked.name,
+                                address: bookmarked.address,
+                                locality: bookmarked.locality,
+                                region: bookmarked.region,
+                                category: bookmarked.category,
+                            })}
+                            onRemove={removeBookmark}
+                            onClear={clearBookmarks}
+                        />
+                        <Button
+                            type="button"
+                            variant={useLocation ? 'default' : 'outline'}
+                            size="icon"
+                            onClick={toggleLocation}
+                            disabled={resolving}
+                            title={useLocation ? 'Location active — click to disable' : 'Use my location'}
+                            aria-label="Toggle location search"
+                            className="shrink-0"
+                        >
+                            {resolving ? (
+                                <Spinner className="size-4" />
+                            ) : (
+                                <MapPin className="size-4" />
+                            )}
+                        </Button>
+                    </div>
+
                     {useLocation && (
-                        <span className="shrink-0 tabular-nums text-xs text-muted-foreground ml-2 max-w-[60%] truncate">
-                            {(() => {
-                                const parts = [location?.municipality, location?.city, location?.region, location?.country].filter(Boolean) as string[];
-                                if (parts.length > 0) return parts.join(', ');
-                                return coords ? `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}` : '';
-                            })()}
-                        </span>
+                        <div className="mt-2">
+                            <span className="tabular-nums text-xs text-muted-foreground max-w-[100%] truncate block">
+                                {(() => {
+                                    const parts = [
+                                        location?.barangay,
+                                        location?.town,
+                                        location?.cityDistrict,
+                                        location?.municipality,
+                                        location?.city,
+                                        location?.region,
+                                        location?.country,
+                                    ].filter(Boolean) as string[];
+                                    if (parts.length > 0) return parts.join(', ');
+                                    return coords ? `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}` : '';
+                                })()}
+                            </span>
+                        </div>
                     )}
                 </div>
                 <div className="flex items-center gap-2">
