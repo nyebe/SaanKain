@@ -57,11 +57,16 @@ function buildSearchParams(parsed: ParsedSearch, coords?: GeoCoords | null): Rec
         params.query = parsed.cuisine;
     }
 
-    if (parsed.locationText) {
-        params.near = normalizeLocationText(parsed.locationText);
-    } else if (coords) {
+    const looksLikeNearMe = (text?: string | null) => {
+        if (!text) return true;
+        return /^\s*(me|near\s+me)\s*$/i.test(text.trim());
+    };
+
+    if (coords && looksLikeNearMe(parsed.locationText)) {
         params.ll = `${coords.lat},${coords.lng}`;
         params.sort = 'DISTANCE';
+    } else if (parsed.locationText) {
+        params.near = normalizeLocationText(parsed.locationText);
     }
 
     return params;

@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useEffect,
   useState,
 } from 'react';
 
@@ -11,9 +12,35 @@ import {
 } from '@/types/search';
 
 export default function useGeoLocation() {
-    const [useLocation, setUseLocation] = useState<boolean>(false);
-    const [coords, setCoords] = useState<GeoCoords | null>(null);
-    const [location, setLocation] = useState<GeoLocation | null>(null);
+    const [useLocation, setUseLocation] = useState<boolean>(() => {
+        try {
+            return localStorage.getItem('saan_useLocation') === 'true';
+        } catch {
+            return false;
+        }
+    });
+
+    const [coords, setCoords] = useState<GeoCoords | null>(() => {
+        try {
+            const s = localStorage.getItem('saan_coords');
+            if (!s) return null;
+            const p = JSON.parse(s);
+            if (p && typeof p.lat === 'number' && typeof p.lng === 'number') return { lat: p.lat, lng: p.lng };
+        } catch {
+            // ignore
+        }
+        return null;
+    });
+
+    const [location, setLocation] = useState<GeoLocation | null>(() => {
+        try {
+            const s = localStorage.getItem('saan_location');
+            if (!s) return null;
+            return JSON.parse(s);
+        } catch {
+            return null;
+        }
+    });
     const [locationError, setLocationError] = useState<string | null>(null);
     const [resolving, setResolving] = useState<boolean>(false);
 
@@ -22,7 +49,15 @@ export default function useGeoLocation() {
             // Turn off — clear everything
             setUseLocation(false);
             setCoords(null);
+            setLocation(null);
             setLocationError(null);
+            try {
+                localStorage.removeItem('saan_useLocation');
+                localStorage.removeItem('saan_coords');
+                localStorage.removeItem('saan_location');
+            } catch {
+                // ignore
+            }
             return;
         }
 
@@ -42,6 +77,12 @@ export default function useGeoLocation() {
                 };
                 setCoords(newCoords);
                 setUseLocation(true);
+                try {
+                    localStorage.setItem('saan_useLocation', 'true');
+                    localStorage.setItem('saan_coords', JSON.stringify(newCoords));
+                } catch {
+                    // ignore
+                }
 
                 try {
                     const url = `https://nominatim.openstreetmap.org/reverse?lat=${encodeURIComponent(newCoords.lat)}&lon=${encodeURIComponent(newCoords.lng)}&format=json`;
@@ -61,7 +102,7 @@ export default function useGeoLocation() {
                         const region = addr.state ?? addr.region ?? addr.county ?? null;
                         const country = addr.country ?? null;
 
-                        setLocation({
+                        const locObj: GeoLocation = {
                             coords: newCoords,
                             displayName,
                             address: addr,
@@ -69,7 +110,14 @@ export default function useGeoLocation() {
                             city,
                             region,
                             country,
-                        });
+                        };
+
+                        setLocation(locObj);
+                        try {
+                            localStorage.setItem('saan_location', JSON.stringify(locObj));
+                        } catch {
+                            // ignore
+                        }
                     } else {
                         setLocation(null);
                     }
@@ -86,6 +134,18 @@ export default function useGeoLocation() {
             { timeout: 8000 }
         );
     }, [useLocation]);
+
+    // Keep localStorage in sync if coords/useLocation change externally
+    useEffect(() => {
+        try {
+            if (useLocation) {
+                if (coords) localStorage.setItem('saan_coords', JSON.stringify(coords));
+                localStorage.setItem('saan_useLocation', 'true');
+            }
+        } catch {
+            // ignore
+        }
+    }, [useLocation, coords]);
 
     return { useLocation, toggleLocation, coords, location, locationError, resolving };
 }

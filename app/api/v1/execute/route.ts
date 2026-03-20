@@ -39,6 +39,20 @@ export async function GET(request: NextRequest): Promise<NextResponse<ExecuteRes
         });
     } catch (err) {
         const detail = err instanceof Error ? err.message : 'Unexpected error';
+
+        if (typeof detail === 'string' && /Boundaries could not be determined/i.test(detail)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: {
+                        code: 'LOCATION_SUGGESTION',
+                        message: 'Could not find your location. Try turning on location (use the location button) so results are searched by your current location.',
+                    },
+                },
+                { status: 400 }
+            );
+        }
+
         return NextResponse.json(
             {
                 success: false,

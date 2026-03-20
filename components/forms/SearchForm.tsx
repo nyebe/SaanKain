@@ -1,6 +1,9 @@
 "use client"
 
-import { ChangeEvent } from 'react';
+import {
+  ChangeEvent,
+  KeyboardEvent,
+} from 'react';
 
 import { useRouter } from 'next/navigation';
 
@@ -26,6 +29,14 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
         <Textarea
           value={message}
           onChange={(changeEvent: ChangeEvent<HTMLTextAreaElement>) => onChange(changeEvent.target.value)}
+          onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              if (onSubmit) onSubmit();
+              const query = message ? `?message=${encodeURIComponent(message)}` : '';
+              router.push(`/results${query}`);
+            }
+          }}
           placeholder="e.g. cheap sushi near makati open now"
           rows={3}
           maxLength={200}
@@ -38,7 +49,16 @@ export default function SearchForm({ message, onChange, onSubmit, disabled = fal
         <Button type="submit" disabled={disabled} className="px-4">
           Search
         </Button>
-        <Button type="button" variant="ghost" onClick={() => onChange("")}>Clear</Button>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => {
+            onChange("");
+            router.push('/results');
+          }}
+        >
+          Clear
+        </Button>
       </div>
     </form>
   );

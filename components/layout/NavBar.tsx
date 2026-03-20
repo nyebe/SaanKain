@@ -83,7 +83,6 @@ export default function NavBar() {
 
                     <div className="hidden sm:flex items-center gap-2">
                         <ThemeToggle />
-                        <Link href="/" className="px-3 py-1 rounded-md bg-primary text-primary-foreground text-sm">Search</Link>
                     </div>
                 </div>
             </div>

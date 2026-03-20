@@ -22,9 +22,16 @@ export default function ThemeToggle() {
 
   // Cycle: light → dark → system → light ...
   const next = () => {
-    if (theme === "light") setTheme("dark")
-    else if (theme === "dark") setTheme("system")
-    else setTheme("light")
+    if (theme === "light") {
+      setTheme("dark");
+      try { localStorage.setItem('saankain_theme', 'dark'); } catch { }
+    } else if (theme === "dark") {
+      setTheme("system");
+      try { localStorage.setItem('saankain_theme', 'system'); } catch { }
+    } else {
+      setTheme("light");
+      try { localStorage.setItem('saankain_theme', 'light'); } catch { }
+    }
   }
 
   return (

@@ -1,9 +1,9 @@
 "use client"
 
 import {
-    useEffect,
-    useRef,
-    useState,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 
 import { MapPin } from 'lucide-react';
@@ -11,11 +11,12 @@ import { MapPin } from 'lucide-react';
 import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
 import SearchForm from '@/components/forms/SearchForm';
 import RestaurantLocationModal
-    from '@/components/modals/RestaurantLocationModal';
+  from '@/components/modals/RestaurantLocationModal';
 import BookmarksSheet from '@/components/sheets/BookmarksSheet';
 import SearchHistorySheet from '@/components/sheets/SearchHistorySheet';
 import ErrorState from '@/components/states/ErrorState';
 import LoadingState from '@/components/states/LoadingState';
+import NoResultsHero from '@/components/states/NoResultsHero';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import ResultsList from '@/components/views/ResultsList';
@@ -45,7 +46,14 @@ export default function ResultsClient() {
         clearHistory,
         selectHistoryEntry,
     } = useResults(coords);
-    const [view, setView] = useState<ViewMode>('list');
+    const [view, setView] = useState<ViewMode>(() => {
+        try {
+            const v = localStorage.getItem('saankain_view') as ViewMode | null;
+            return v ?? 'list';
+        } catch {
+            return 'list';
+        }
+    });
     const sentinelRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -135,7 +143,13 @@ export default function ResultsClient() {
                 <div className="mt-6">
                     <div className="flex items-center justify-between gap-4 mb-4">
                         <div />
-                        <ViewModeToggle view={view} onChange={setView} />
+                        <ViewModeToggle
+                            view={view}
+                            onChange={(v) => {
+                                setView(v);
+                                try { localStorage.setItem('saankain_view', v); } catch { }
+                            }}
+                        />
                     </div>
 
                     {loading && <LoadingState />}
@@ -166,6 +180,9 @@ export default function ResultsClient() {
                                 </p>
                             )}
                         </>
+                    )}
+                    {!loading && !errorMessage && visibleResults.length === 0 && (
+                        <NoResultsHero message={message} />
                     )}
                 </div>
             </div>

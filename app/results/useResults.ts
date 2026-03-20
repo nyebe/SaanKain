@@ -1,14 +1,14 @@
 "use client"
 
 import {
-    useEffect,
-    useRef,
-    useState,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 
 import {
-    useRouter,
-    useSearchParams,
+  useRouter,
+  useSearchParams,
 } from 'next/navigation';
 
 import useSearchHistory from '@/hooks/useSearchHistory';
@@ -35,7 +35,13 @@ export default function useResults(coords: GeoCoords | null = null) {
 
     useEffect(() => {
         const msg = searchParams?.get('message');
-        if (!msg) return;
+        if (!msg) {
+            setResults([]);
+            setErrorMessage(null);
+            setVisibleCount(PAGE_SIZE);
+            setLoading(false);
+            return;
+        }
         const query = msg;
 
         let mounted = true;
