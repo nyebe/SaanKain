@@ -8,6 +8,9 @@ export interface GeoLocation {
     displayName: string;
     address?: Record<string, unknown> | null;
     municipality?: string | null;
+    barangay?: string | null;
+    town?: string | null;
+    cityDistrict?: string | null;
     city?: string | null;
     region?: string | null;
     country?: string | null;

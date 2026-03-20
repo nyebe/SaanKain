@@ -49,7 +49,7 @@ export default function ResultGalleryCard({
                 <div className="w-full bg-muted/10 h-32 lg:h-48 shrink-0 overflow-hidden">
                     <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
                         <div className="w-10 h-10 rounded-md bg-muted/10 shrink-0 overflow-hidden">
-                            <Image src={avatarUrl} alt={item.name} width={40} height={40} />
+                            <Image src={avatarUrl} alt={item.name} width={60} height={60} unoptimized />
                         </div>
                     </div>
                 </div>

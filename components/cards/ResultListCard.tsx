@@ -46,7 +46,7 @@ export default function ResultListCard({
       )}
       <div className="flex items-start gap-3">
         <div className="w-12 h-12 rounded-md shrink-0 bg-muted/10 overflow-hidden">
-          <Image src={avatarUrl} alt={item.name} width={48} height={48} />
+          <Image src={avatarUrl} alt={item.name} width={48} height={48} unoptimized />
         </div>
 
         <div className="flex-1 min-w-0">

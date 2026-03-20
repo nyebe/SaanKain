@@ -6,7 +6,10 @@ import {
     useState,
 } from 'react';
 
-import { MapPin } from 'lucide-react';
+import {
+    Filter,
+    MapPin,
+} from 'lucide-react';
 
 import SortControl from '@/components/buttonGroup/SortControl';
 import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
@@ -19,6 +22,12 @@ import ErrorState from '@/components/states/ErrorState';
 import LoadingState from '@/components/states/LoadingState';
 import NoResultsHero from '@/components/states/NoResultsHero';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
 import ResultsList from '@/components/views/ResultsList';
 import useBookmarks from '@/hooks/useBookmarks';
@@ -38,8 +47,8 @@ export default function ResultsClient() {
         setMessage,
         loading,
         errorMessage,
-        visibleResults,
-        hasMore,
+        results: allResults,
+        visibleResults: hookVisibleResults,
         loadMore,
         handleSubmit,
         history,
@@ -47,6 +56,19 @@ export default function ResultsClient() {
         clearHistory,
         selectHistoryEntry,
     } = useResults(coords);
+
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(['all']);
+
+    const categories = Array.from(
+        new Set(allResults.map((r) => r.category).filter(Boolean) as string[])
+    ).sort();
+
+    const filteredResults = selectedCategories.includes('all')
+        ? allResults
+        : allResults.filter((r) => (r.category ? selectedCategories.includes(r.category) : false));
+
+    const visibleResults = filteredResults.slice(0, hookVisibleResults.length);
+    const hasMore = visibleResults.length < filteredResults.length;
     const [view, setView] = useState<ViewMode>(() => {
         try {
             const v = localStorage.getItem('saankain_view') as ViewMode | null;
@@ -57,11 +79,23 @@ export default function ResultsClient() {
     });
     const sentinelRef = useRef<HTMLDivElement>(null);
     const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>(() => {
-        try { return (localStorage.getItem('saankain_sort_field') as 'name' | 'type' | 'distance') ?? 'name'; } catch { return 'name'; }
+        try {
+            const sf = localStorage.getItem('saankain_sort_field') as 'name' | 'type' | 'distance' | null;
+            return sf ?? 'name';
+        } catch {
+            return 'name';
+        }
     });
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
-        try { return (localStorage.getItem('saankain_sort_direction') as 'asc' | 'desc') ?? 'asc'; } catch { return 'asc'; }
+        try {
+            const sd = localStorage.getItem('saankain_sort_direction') as 'asc' | 'desc' | null;
+            return sd ?? 'asc';
+        } catch {
+            return 'asc';
+        }
     });
+
+
 
     useEffect(() => {
         const sentinel = sentinelRef.current;
@@ -86,50 +120,63 @@ export default function ResultsClient() {
     return (
         <main className="p-6">
             <div className="mx-auto max-w-3xl">
-                <div className="flex items-center mb-6 gap-4">
-                    <SearchHistorySheet
-                        history={history}
-                        onSelect={selectHistoryEntry}
-                        onRemove={removeEntry}
-                        onClear={clearHistory}
-                    />
-                    <BookmarksSheet
-                        bookmarks={bookmarks}
-                        onSelect={(bookmarked) => setSelectedRestaurant({
-                            fsqId: bookmarked.fsqId,
-                            name: bookmarked.name,
-                            address: bookmarked.address,
-                            locality: bookmarked.locality,
-                            region: bookmarked.region,
-                            category: bookmarked.category,
-                        })}
-                        onRemove={removeBookmark}
-                        onClear={clearBookmarks}
-                    />
-                    <Button
-                        type="button"
-                        variant={useLocation ? 'default' : 'outline'}
-                        size="icon"
-                        onClick={toggleLocation}
-                        disabled={resolving}
-                        title={useLocation ? 'Location active — click to disable' : 'Use my location'}
-                        aria-label="Toggle location search"
-                        className="shrink-0"
-                    >
-                        {resolving ? (
-                            <Spinner className="size-4" />
-                        ) : (
-                            <MapPin className="size-4" />
-                        )}
-                    </Button>
+                <div className="mb-6">
+                    <div className="flex items-center gap-2">
+                        <SearchHistorySheet
+                            history={history}
+                            onSelect={selectHistoryEntry}
+                            onRemove={removeEntry}
+                            onClear={clearHistory}
+                        />
+                        <BookmarksSheet
+                            bookmarks={bookmarks}
+                            onSelect={(bookmarked) => setSelectedRestaurant({
+                                fsqId: bookmarked.fsqId,
+                                name: bookmarked.name,
+                                address: bookmarked.address,
+                                locality: bookmarked.locality,
+                                region: bookmarked.region,
+                                category: bookmarked.category,
+                            })}
+                            onRemove={removeBookmark}
+                            onClear={clearBookmarks}
+                        />
+                        <Button
+                            type="button"
+                            variant={useLocation ? 'default' : 'outline'}
+                            size="icon"
+                            onClick={toggleLocation}
+                            disabled={resolving}
+                            title={useLocation ? 'Location active — click to disable' : 'Use my location'}
+                            aria-label="Toggle location search"
+                            className="shrink-0"
+                        >
+                            {resolving ? (
+                                <Spinner className="size-4" />
+                            ) : (
+                                <MapPin className="size-4" />
+                            )}
+                        </Button>
+                    </div>
+
                     {useLocation && (
-                        <span className="shrink-0 tabular-nums text-xs text-muted-foreground ml-2 max-w-[60%] truncate">
-                            {(() => {
-                                const parts = [location?.municipality, location?.city, location?.region, location?.country].filter(Boolean) as string[];
-                                if (parts.length > 0) return parts.join(', ');
-                                return coords ? `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}` : '';
-                            })()}
-                        </span>
+                        <div className="mt-2">
+                            <span className="tabular-nums text-xs text-muted-foreground max-w-[100%] truncate block">
+                                {(() => {
+                                    const parts = [
+                                        location?.barangay,
+                                        location?.town,
+                                        location?.cityDistrict,
+                                        location?.municipality,
+                                        location?.city,
+                                        location?.region,
+                                        location?.country,
+                                    ].filter(Boolean) as string[];
+                                    if (parts.length > 0) return parts.join(', ');
+                                    return coords ? `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}` : '';
+                                })()}
+                            </span>
+                        </div>
                     )}
                 </div>
                 <div className="flex items-center gap-2">
@@ -165,6 +212,41 @@ export default function ResultsClient() {
                                     try { localStorage.setItem('saankain_sort_field', field); localStorage.setItem('saankain_sort_direction', dir); } catch { }
                                 }}
                             />
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                    <div aria-label="Filter results">
+                                        <Filter className="h-4 w-4" />
+                                    </div>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent sideOffset={8} className="min-w-[160px]">
+                                    <DropdownMenuCheckboxItem
+                                        checked={selectedCategories.includes('all')}
+                                        onCheckedChange={(v) => {
+                                            if (v) setSelectedCategories(['all']);
+                                        }}
+                                    >
+                                        All
+                                    </DropdownMenuCheckboxItem>
+                                    {categories.map((c) => (
+                                        <DropdownMenuCheckboxItem
+                                            key={c}
+                                            checked={selectedCategories.includes(c)}
+                                            onCheckedChange={(v) => {
+                                                setSelectedCategories((prev) => {
+                                                    const next = prev.filter((x) => x !== 'all');
+                                                    if (v) {
+                                                        return Array.from(new Set([...next, c]));
+                                                    }
+                                                    const removed = next.filter((x) => x !== c);
+                                                    return removed.length === 0 ? ['all'] : removed;
+                                                });
+                                            }}
+                                        >
+                                            {c}
+                                        </DropdownMenuCheckboxItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                             <ViewModeToggle
                                 view={view}
                                 onChange={(v) => {

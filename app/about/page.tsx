@@ -17,7 +17,6 @@ import {
     Search,
     Smartphone,
     Star,
-    Zap,
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -56,51 +55,59 @@ const timelineSteps = [
         emoji: '💬',
         label: 'You type it',
         desc: 'cheap sushi near makati open now',
-        color: 'from-yellow-400 to-orange-400',
-        bg: 'bg-yellow-50 dark:bg-yellow-950/30',
-        border: 'border-yellow-200 dark:border-yellow-800',
+        color: 'from-black to-white',
+        bg: 'bg-black/5 dark:bg-black/950/30',
+        border: 'border-black/10 dark:border-white/10',
+    },
+    {
+        icon: Search,
+        emoji: '🔍',
+        label: 'LLM / Rule Parser',
+        desc: 'Groq LLM (or rule-based fallback) extracts cuisine · location · openNow',
+        color: 'from-black to-white',
+        bg: 'bg-black/5 dark:bg-black/950/30',
+        border: 'border-black/10 dark:border-white/10',
     },
     {
         icon: Cpu,
         emoji: '🧠',
-        label: 'Parser decodes',
-        desc: 'cuisine · distance · location · openNow',
-        color: 'from-sky-400 to-indigo-400',
-        bg: 'bg-sky-50 dark:bg-sky-950/30',
-        border: 'border-sky-200 dark:border-sky-800',
+        label: 'Location resolved',
+        desc: 'Browser Geolocation + Nominatim reverse-geocode → lat/lng coordinates',
+        color: 'from-black to-white',
+        bg: 'bg-black/5 dark:bg-black/950/30',
+        border: 'border-black/10 dark:border-white/10',
     },
     {
         icon: MapPin,
         emoji: '📍',
         label: 'Places fetched',
-        desc: 'Foursquare API returns candidates',
-        color: 'from-emerald-400 to-teal-400',
-        bg: 'bg-emerald-50 dark:bg-emerald-950/30',
-        border: 'border-emerald-200 dark:border-emerald-800',
+        desc: 'Foursquare Places API: query · near text or ll coordinates',
+        color: 'from-black to-white',
+        bg: 'bg-black/5 dark:bg-black/950/30',
+        border: 'border-black/10 dark:border-white/10',
     },
     {
         icon: BarChart2,
         emoji: '🏆',
         label: 'Smart ranking',
-        desc: 'Scores by match · rating · distance',
-        color: 'from-violet-400 to-purple-500',
-        bg: 'bg-violet-50 dark:bg-violet-950/30',
-        border: 'border-violet-200 dark:border-violet-800',
+        desc: 'Cuisine match scored · distance as tiebreaker',
+        color: 'from-black to-white',
+        bg: 'bg-black/5 dark:bg-black/950/30',
+        border: 'border-black/10 dark:border-white/10',
     },
     {
         icon: Smartphone,
         emoji: '✨',
         label: 'Results appear',
-        desc: 'Clean, mobile-first UI delivered',
-        color: 'from-rose-400 to-pink-500',
-        bg: 'bg-rose-50 dark:bg-rose-950/30',
-        border: 'border-rose-200 dark:border-rose-800',
+        desc: 'Filter by category · Sort by name, type or distance · List or Gallery',
+        color: 'from-black to-white',
+        bg: 'bg-black/5 dark:bg-black/950/30',
+        border: 'border-black/10 dark:border-white/10',
     },
 ];
 
 const parsedFields = [
     { key: 'cuisine', value: '"sushi"', color: 'text-yellow-500' },
-    { key: 'priceLevel', value: '1', color: 'text-emerald-400' },
     { key: 'location', value: '"makati"', color: 'text-sky-400' },
     { key: 'openNow', value: 'true', color: 'text-violet-400' },
 ];
@@ -120,62 +127,6 @@ function AnimatedSection({ children, className = '' }: { children: React.ReactNo
     );
 }
 
-const signals = [
-    { label: 'Cuisine match', emoji: '🍜', weight: 40 },
-    { label: 'Price match', emoji: '💸', weight: 25 },
-    { label: 'Open status', emoji: '🟢', weight: 20 },
-    { label: 'Rating', emoji: '⭐', weight: 10 },
-    { label: 'Distance', emoji: '📏', weight: 5 },
-];
-
-function RankingSection() {
-    const ref = useRef(null);
-    const inView = useInView(ref, { once: true, margin: '-60px' });
-
-    return (
-        <AnimatedSection>
-            <br />
-            <br />
-            <hr />
-            <br />
-            <motion.h2 variants={fadeUp} className="text-2xl font-bold mb-2">
-                Ranking System
-            </motion.h2>
-            <motion.p variants={fadeUp} custom={1} className="text-sm text-muted-foreground mb-6">
-                Results scored by a deterministic function — transparent and testable.
-            </motion.p>
-
-            <div ref={ref} className="space-y-3">
-                {signals.map((s, i) => (
-                    <motion.div
-                        key={s.label}
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={inView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ delay: i * 0.09, duration: 0.4 }}
-                        className="flex items-center gap-3"
-                    >
-                        <span className="text-lg w-7 shrink-0">{s.emoji}</span>
-                        <span className="text-sm w-28 shrink-0">{s.label}</span>
-                        <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                            <motion.div
-                                className="h-full rounded-full bg-linear-to-r from-yellow-400 to-orange-400"
-                                initial={{ width: 0 }}
-                                animate={inView ? { width: `${s.weight}%` } : { width: 0 }}
-                                transition={{ delay: 0.3 + i * 0.09, duration: 0.7 }}
-                            />
-                        </div>
-                        <span className="text-xs text-muted-foreground w-8 text-right">{s.weight}%</span>
-                    </motion.div>
-                ))}
-            </div>
-
-            <motion.p variants={fadeUp} custom={6} className="mt-4 text-xs text-muted-foreground">
-                Deliberately simple and explainable — easy to review, easy to test.
-            </motion.p>
-        </AnimatedSection>
-    );
-}
-
 function ParserSection() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: true, margin: '-60px' });
@@ -190,7 +141,7 @@ function ParserSection() {
                 Natural Language Parsing
             </motion.h2>
             <motion.p variants={fadeUp} custom={1} className="text-sm text-muted-foreground mb-6 text-center">
-                Casual text → structured parameters. Rule-based, deterministic, and interview-friendly.
+                Casual text → structured parameters. Groq LLM with a rule-based fallback — always deterministic.
             </motion.p>
 
             <motion.div
@@ -230,19 +181,19 @@ function ParserSection() {
             </motion.div>
 
             <motion.p variants={fadeUp} custom={4} className="mt-4 text-xs text-muted-foreground leading-relaxed text-center">
-                Currently uses concise rules and regular expressions. Future versions could layer in LLM assistance for ambiguous queries.
+                Uses Groq LLM (llama-3.1-8b-instruct) when available; falls back to regex rules. Extracts cuisine, location, and open‑now status.
             </motion.p>
         </AnimatedSection>
     );
 }
 
 const features = [
-    { icon: Search, label: 'Natural Language', desc: 'Type like you talk — no dropdowns, no menus.', emoji: '🗣️' },
-    { icon: Filter, label: 'Smart Filtering', desc: 'Cuisine, budget, location, open-now — all inferred.', emoji: '🎯' },
-    { icon: MapPin, label: 'Foursquare Places', desc: 'Rich POI data from a trusted global API.', emoji: '🗺️' },
-    { icon: Zap, label: 'Fast Results', desc: 'Lightweight rule-based pipeline with no latency.', emoji: '⚡' },
-    { icon: Star, label: 'Smart Ranking', desc: 'Multi-signal scoring surfaces the best match first.', emoji: '🏅' },
-    { icon: Smartphone, label: 'Mobile-First', desc: 'Designed for thumbs — clean and responsive.', emoji: '📱' },
+    { icon: MessageCircle, label: 'Natural Language', desc: 'Type free-text queries — no forms or dropdowns needed.', emoji: '🗣️' },
+    { icon: Cpu, label: 'LLM + Rule Parser', desc: 'Groq LLM with rule-based fallback extracts cuisine, location, and open status.', emoji: '🧠' },
+    { icon: MapPin, label: 'Geolocation', desc: 'Browser Geolocation + Nominatim reverse-geocode powers "near me" searches.', emoji: '📍' },
+    { icon: Search, label: 'Foursquare Places', desc: 'Live place data via Foursquare Places API — queried by text or coordinates.', emoji: '🗺️' },
+    { icon: Filter, label: 'Filter, Sort & View', desc: 'Filter by category, sort by name/type/distance, switch list or gallery view.', emoji: '🎛️' },
+    { icon: Star, label: 'Bookmarks & History', desc: 'Save favourite spots and revisit past searches anytime.', emoji: '🔖' },
 ];
 
 function FeaturesGrid() {
@@ -306,10 +257,10 @@ function FeaturesGrid() {
 }
 
 const stack = [
-    { category: 'Frontend', items: ['Next.js', 'React', 'TypeScript', 'TailwindCSS', 'shadcn/ui'], emoji: '🎨' },
-    { category: 'Backend', items: ['Next.js API', 'Node.js', 'TypeScript'], emoji: '⚙️' },
-    { category: 'Integration', items: ['Foursquare Places API'], emoji: '🔌' },
-    { category: 'Testing', items: ['Vitest', 'Playwright'], emoji: '🧪' },
+    { category: 'Framework', items: ['Next.js (Full Stack)', 'TypeScript', 'CSS'], emoji: '🏗️' },
+    { category: 'UI', items: ['TailwindCSS', 'shadcn/ui', 'Framer Motion', 'Lucide React', 'Recharts', 'Sonner', 'Vaul', 'Embla Carousel'], emoji: '🎨' },
+    { category: 'HTTP / AI', items: ['Axios', 'groq-sdk'], emoji: '⚙️' },
+    { category: 'Integrations', items: ['Foursquare Places API', 'OpenStreetMap Nominatim'], emoji: '🔌' },
 ];
 
 function TechStack() {
@@ -367,6 +318,107 @@ function TechStack() {
     );
 }
 
+const practices = [
+    {
+        emoji: '🔒',
+        label: 'TypeScript Strict Mode',
+        desc: 'strict: true in tsconfig — no any, full type safety across every module.',
+    },
+    {
+        emoji: '🏗️',
+        label: 'Layered Architecture',
+        desc: 'lib/ → services/ → hooks/ → components/ — each layer has one responsibility.',
+    },
+    {
+        emoji: '🛡️',
+        label: 'API Input Validation',
+        desc: 'Auth code, message length, and coordinate range validated before any logic runs.',
+    },
+    {
+        emoji: '🧠',
+        label: 'LLM Output Guarded by Zod',
+        desc: 'Groq LLM response validated with a Zod schema; rule-based fallback always available.',
+    },
+    {
+        emoji: '🧪',
+        label: 'Unit Tests — Vitest',
+        desc: 'Parser and validation modules covered with describe / it test suites under tests/.',
+    },
+    {
+        emoji: '💾',
+        label: 'Safe localStorage',
+        desc: 'SSR guard + try/catch on all reads/writes. History capped at 50, bookmarks at 20.',
+    },
+    {
+        emoji: '⚙️',
+        label: 'Env-based Configuration',
+        desc: 'All secrets and limits via environment variables — never hardcoded in library code.',
+    },
+    {
+        emoji: '🌐',
+        label: 'SEO Metadata',
+        desc: 'Next.js metadata API: title, description, OpenGraph, and keywords defined in layout.',
+    },
+];
+
+function PracticesSection() {
+    const ref = useRef(null);
+    const inView = useInView(ref, { once: true, margin: '-60px' });
+
+    return (
+        <AnimatedSection>
+            <br />
+            <br />
+            <hr />
+            <br />
+            <motion.h2 variants={fadeUp} className="text-2xl font-bold mb-2">
+                Engineering Practices
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={1} className="text-sm text-muted-foreground mb-6">
+                Patterns applied throughout the codebase.
+            </motion.p>
+
+            <div ref={ref} className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {practices.map((practice, i) => (
+                    <motion.div
+                        key={practice.label}
+                        variants={popIn}
+                        custom={i}
+                        initial="hidden"
+                        animate={inView ? 'visible' : 'hidden'}
+                        whileHover={{
+                            scale: 1.03,
+                            boxShadow: '0 0 24px 4px rgba(0,0,0,0.10)',
+                            transition: { duration: 0.22 },
+                        }}
+                        className="group relative p-5 rounded-2xl border border-border bg-card cursor-default overflow-hidden"
+                    >
+                        <motion.div
+                            className="absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-black to-black/40 dark:from-white dark:to-white/30"
+                            initial={{ width: 0 }}
+                            whileHover={{ width: '100%' }}
+                            transition={{ duration: 0.3 }}
+                        />
+                        <div className="flex flex-col items-start gap-3">
+                            <motion.span
+                                className="text-2xl"
+                                whileHover={{ rotate: [0, -12, 12, -6, 0], scale: 1.25 }}
+                                transition={{ duration: 0.45 }}
+                            >
+                                {practice.emoji}
+                            </motion.span>
+                            <div>
+                                <p className="font-semibold text-sm">{practice.label}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{practice.desc}</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+        </AnimatedSection>
+    );
+}
+
 export default function AboutPage() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: true, margin: '-60px' });
@@ -406,14 +458,14 @@ export default function AboutPage() {
                         How It Works
                     </motion.h2>
                     <motion.p variants={fadeUp} custom={1} className="text-sm text-muted-foreground mb-8  text-center">
-                        Five steps from question to delicious answer.
+                        Six steps from question to delicious answer.
                     </motion.p>
 
                     <div className="flex justify-center mt-8s">
                         <div ref={ref} className="relative w-lg">
                             {/* connector line */}
                             <motion.div
-                                className="absolute left-1/2 top-10 bottom-10 w-0.5 bg-linear-to-b from-yellow-400 via-violet-400 to-rose-400 hidden sm:block"
+                                className="absolute left-1/2 top-10 bottom-10 w-0.5 bg-black hidden sm:block"
                                 initial={{ scaleY: 0, originY: 0 }}
                                 animate={inView ? { scaleY: 1 } : { scaleY: 0 }}
                                 transition={{ duration: 1.1, delay: 0.2 }}
@@ -490,11 +542,11 @@ export default function AboutPage() {
 
                 <ParserSection />
 
-                <RankingSection />
-
                 <FeaturesGrid />
 
                 <TechStack />
+
+                <PracticesSection />
 
                 <br />
                 <br />
