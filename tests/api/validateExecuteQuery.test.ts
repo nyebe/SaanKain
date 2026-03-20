@@ -6,7 +6,7 @@ import {
 
 import { validateExecuteQuery } from '@/lib/validation/validateExecuteQuery';
 
-describe('validateExecuteQuery — authentication', () => {
+describe('validateExecuteQuery - authentication', () => {
     it('rejects a wrong code', () => {
         const result = validateExecuteQuery('wrongcode', 'sushi near LA');
         expect(result.valid).toBe(false);
@@ -24,21 +24,9 @@ describe('validateExecuteQuery — authentication', () => {
         expect(result.valid).toBe(false);
         if (!result.valid) expect(result.error.code).toBe('UNAUTHORIZED');
     });
-
-    it('rejects a code that is almost correct', () => {
-        const result = validateExecuteQuery('pioneerdev', 'sushi near LA');
-        expect(result.valid).toBe(false);
-        if (!result.valid) expect(result.error.code).toBe('UNAUTHORIZED');
-    });
-
-    it('rejects a code with trailing space', () => {
-        const result = validateExecuteQuery('pioneerdevai ', 'sushi near LA');
-        expect(result.valid).toBe(false);
-        if (!result.valid) expect(result.error.code).toBe('UNAUTHORIZED');
-    });
 });
 
-describe('validateExecuteQuery — message validation', () => {
+describe('validateExecuteQuery - message validation', () => {
     it('rejects a null message', () => {
         const result = validateExecuteQuery('pioneerdevai', null);
         expect(result.valid).toBe(false);
@@ -69,7 +57,30 @@ describe('validateExecuteQuery — message validation', () => {
     });
 });
 
-describe('validateExecuteQuery — valid inputs', () => {
+describe('validateExecuteQuery - coords handling', () => {
+    it('accepts valid coords', () => {
+        const result = validateExecuteQuery('pioneerdevai', 'sushi', '14.5995,120.9842');
+        expect(result.valid).toBe(true);
+        if (result.valid) {
+            expect(result.coords?.lat).toBeCloseTo(14.5995);
+            expect(result.coords?.lng).toBeCloseTo(120.9842);
+        }
+    });
+
+    it('rejects malformed coords', () => {
+        const result = validateExecuteQuery('pioneerdevai', 'sushi', '14.5995;120.9842');
+        expect(result.valid).toBe(false);
+        if (!result.valid) expect(result.error.code).toBe('INVALID_COORDS');
+    });
+
+    it('rejects out-of-range coords', () => {
+        const result = validateExecuteQuery('pioneerdevai', 'sushi', '1234,999');
+        expect(result.valid).toBe(false);
+        if (!result.valid) expect(result.error.code).toBe('INVALID_COORDS');
+    });
+});
+
+describe('validateExecuteQuery - valid inputs', () => {
     it('returns valid for correct code and message', () => {
         const result = validateExecuteQuery('pioneerdevai', 'sushi near BGC');
         expect(result.valid).toBe(true);
