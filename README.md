@@ -97,24 +97,23 @@ You need accounts on the following services to run SaanKain:
 
 ## ⚙️ Environment Variables
 
-Create a `.env.local` file in the project root:
+Create a `.env` file in the project root:
 
 ```env
-# Required — Foursquare Places API bearer token
-FOURSQUARE_API_KEY=your_foursquare_api_key_here
+# Foursquare Places API
+FOURSQUARE_API_KEY=
+FOURSQUARE_API_BASE=https://places-api.foursquare.com
+FOURSQUARE_RESULT_LIMIT=25
+FOURSQUARE_FIELDS=fsq_place_id,name,location,categories,distance,date_closed
 
-# Required — Foursquare Places API base URL
-FOURSQUARE_API_BASE=https://api.foursquare.com/v3
+# API Gate
+EXECUTE_API_CODE=pioneerdevai
+MAX_MESSAGE_LENGTH=500
 
-# Optional — Groq LLM API key (enables smarter NL parsing)
-# If omitted, the app falls back to the built-in regex parser
-GROQ_API_KEY=your_groq_api_key_here
-
-# Optional — set to "false" to force regex-only parsing even when GROQ_API_KEY is set
-# USE_LLM_PARSE=false
-
-# Required — API access code (simple auth gate)
-NEXT_PUBLIC_API_CODE=pioneerdevai
+# Groq
+GROQ_API_KEY=
+GROQ_MODEL=llama-3.1-8b-instruct
+USE_LLM_PARSE=true
 ```
 
 > **Never commit `.env.local` to source control.** It is already listed in `.gitignore`.
@@ -139,8 +138,8 @@ cd SaanKain
 npm install
 
 # 3. Set up environment variables
-cp .env.example .env.local
-# Edit .env.local and fill in your API keys
+cp .env .env
+# Edit .env and fill in your API keys
 
 # 4. Start the development server
 npm run dev
