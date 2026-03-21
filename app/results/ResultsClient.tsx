@@ -1,10 +1,6 @@
 "use client"
 
-import {
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import { useState } from 'react';
 
 import {
     Filter,
@@ -48,71 +44,26 @@ export default function ResultsClient() {
         loading,
         errorMessage,
         results: allResults,
-        visibleResults: hookVisibleResults,
+        visibleResults: visibleResults,
+        hasMore,
         loadMore,
+        sentinelRef,
+        selectedCategories,
+        setSelectedCategories,
+        categories,
+        sortField,
+        setSortField,
+        sortDirection,
+        setSortDirection,
+        view,
+        setView,
         handleSubmit,
         history,
         removeEntry,
         clearHistory,
         selectHistoryEntry,
     } = useResults(coords);
-
-    const [selectedCategories, setSelectedCategories] = useState<string[]>(['all']);
-
-    const categories = Array.from(
-        new Set(allResults.map((r) => r.category).filter(Boolean) as string[])
-    ).sort();
-
-    const filteredResults = selectedCategories.includes('all')
-        ? allResults
-        : allResults.filter((r) => (r.category ? selectedCategories.includes(r.category) : false));
-
-    const visibleResults = filteredResults.slice(0, hookVisibleResults.length);
-    const hasMore = visibleResults.length < filteredResults.length;
-    const [view, setView] = useState<ViewMode>(() => {
-        try {
-            const v = localStorage.getItem('saankain_view') as ViewMode | null;
-            return v ?? 'list';
-        } catch {
-            return 'list';
-        }
-    });
-    const sentinelRef = useRef<HTMLDivElement>(null);
-    const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>(() => {
-        try {
-            const sf = localStorage.getItem('saankain_sort_field') as 'name' | 'type' | 'distance' | null;
-            return sf ?? 'name';
-        } catch {
-            return 'name';
-        }
-    });
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
-        try {
-            const sd = localStorage.getItem('saankain_sort_direction') as 'asc' | 'desc' | null;
-            return sd ?? 'asc';
-        } catch {
-            return 'asc';
-        }
-    });
-
-
-
-    useEffect(() => {
-        const sentinel = sentinelRef.current;
-        if (!sentinel) return;
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && hasMore) {
-                    loadMore();
-                }
-            },
-            { rootMargin: '120px' }
-        );
-
-        observer.observe(sentinel);
-        return () => observer.disconnect();
-    }, [hasMore, loadMore]);
+    // note: sorting persistence on user action
 
     const showResults = !loading && !errorMessage && visibleResults.length > 0;
     const isExhausted = !loading && !errorMessage && !hasMore && visibleResults.length > 0;
@@ -250,7 +201,7 @@ export default function ResultsClient() {
                             <ViewModeToggle
                                 view={view}
                                 onChange={(v) => {
-                                    setView(v);
+                                    setView(v as ViewMode);
                                     try { localStorage.setItem('saankain_view', v); } catch { }
                                 }}
                             />
@@ -262,24 +213,9 @@ export default function ResultsClient() {
 
                     {showResults && (
                         <>
+
                             <ResultsList
-                                results={[...visibleResults].sort((a, b) => {
-                                    const dir = sortDirection === 'asc' ? 1 : -1;
-                                    if (sortField === 'name') {
-                                        const A = (a.name || '').toLowerCase();
-                                        const B = (b.name || '').toLowerCase();
-                                        return A < B ? -1 * dir : A > B ? 1 * dir : 0;
-                                    }
-                                    if (sortField === 'type') {
-                                        const A = (a.category || '').toLowerCase();
-                                        const B = (b.category || '').toLowerCase();
-                                        return A < B ? -1 * dir : A > B ? 1 * dir : 0;
-                                    }
-                                    // distance
-                                    const Ad = typeof a.distance === 'number' ? a.distance : Number.POSITIVE_INFINITY;
-                                    const Bd = typeof b.distance === 'number' ? b.distance : Number.POSITIVE_INFINITY;
-                                    return (Ad - Bd) * dir;
-                                })}
+                                results={visibleResults}
                                 view={view}
                                 onSelect={setSelectedRestaurant}
                                 isBookmarked={isBookmarked}
