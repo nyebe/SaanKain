@@ -41,7 +41,7 @@ The app interprets your message, searches places via the **Foursquare Places API
 - [Foursquare Places API](https://docs.foursquare.com/fsq-developers-places) · [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org/)
 
 ### Testing
-- Vitest · Testing Library · Playwright (E2E)
+- Vitest · Testing Library
 
 ---
 
@@ -158,7 +158,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `npm run lint` | Run ESLint |
 | `npm run type-check` | Run TypeScript type checking |
 | `npm test` | Run unit tests (Vitest) |
-| `npm run test:e2e` | Run end-to-end tests (Playwright) |
 
 ---
 
@@ -198,8 +197,6 @@ npm test
 # Watch mode
 npm run test:watch
 
-# End-to-end tests
-npm run test:e2e
 ```
 
 Test files live under `tests/`:
@@ -251,6 +248,11 @@ SaanKain/
 - 🧪 **Unit Tests** — parser and validation modules covered with Vitest
 - 💾 **Safe localStorage** — SSR guard + try/catch on all reads/writes; history capped at 50, bookmarks at 20
 - 🌐 **SEO Metadata** — Next.js metadata API with title, description, OpenGraph, and keywords
+- 📲 **Functional Decomposition** — Breaking down complex functions into smaller, more manageable pieces.
+- 🗃️ **4-File Structure Page** — Organizing page components into four distinct files for better maintainability.
+- 📦 **Single Responsibility Principle** — Each function or class should have only one reason to change.
+- 🍱 **Separation of Concerns** — Dividing a program into distinct sections where each section addresses a separate concern.
+- 🔠 **Naming Conventions** — Using descriptive and consistent names for variables, functions, and classes.
 
 ---
 
@@ -263,7 +265,7 @@ Building playful, practical projects. When not coding, exploring mountains, beac
 - [LinkedIn](https://www.linkedin.com/in/ian-cedric-ramirez)
 - [GitHub](https://github.com/ian-cedric-ramirez)
 
-Built by **[Nyebe Creations](https://github.com/nyebe)**.
+Built by **[Ian](https://github.com/nyebe)**.
 
 ---
 
