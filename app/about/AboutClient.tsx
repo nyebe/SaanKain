@@ -247,7 +247,7 @@ function AboutProject() {
             <h4 className="text-lg font-semibold">About SaanKain</h4>
             <p className="text-sm leading-relaxed text-muted-foreground">
                 Ever asked yourself:{' '}
-                <span className="font-semibold text-foreground">"Saan ba tayo kakain?"</span>{' '}
+                <span className="font-semibold text-foreground">&quot;Saan ba tayo kakain?&quot;</span>{' '}
                 SaanKain lets you type that exact question — or anything similar — in natural language. Example:{' '}
                 <code className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs text-foreground">cheap sushi near makati open now</code>. The app interprets the message, searches places, ranks results, and presents them in a clean, mobile-first UI.
             </p>
@@ -360,8 +360,6 @@ function SectionSeparator({ size = 'md' }: { size?: 'md' | 'lg' }) {
 
 export default function AboutClient() {
     useAboutPage();
-    const ref = useRef(null);
-    const inView = useInView(ref, { once: true, margin: '-60px' });
 
     return (
         <main className="p-6">

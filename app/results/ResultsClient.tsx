@@ -26,6 +26,12 @@ import ResultsList from '@/components/views/ResultsList';
 import useBookmarks from '@/hooks/useBookmarks';
 import useGeoLocation from '@/hooks/useGeoLocation';
 import { RestaurantResult } from '@/types/restaurant';
+import {
+    BookmarkedRestaurant,
+    GeoCoords,
+    GeoLocation,
+    SearchHistoryEntry,
+} from '@/types/search';
 import { ViewMode } from '@/types/ui';
 
 import useResults from './useResults';
@@ -47,9 +53,22 @@ function FunctionButtons({
     toggleLocation,
     coords,
     location,
-    locationError,
     resolving,
-}: any) {
+}: {
+    history: SearchHistoryEntry[];
+    onSelectHistory: (q: string) => void;
+    onRemoveHistory: (q: string) => void;
+    onClearHistory: () => void;
+    bookmarks: BookmarkedRestaurant[];
+    onSelectBookmark: (b: BookmarkedRestaurant) => void;
+    onRemoveBookmark: (fsqId: string) => void;
+    onClearBookmarks: () => void;
+    useLocation?: boolean;
+    toggleLocation: () => void;
+    coords?: GeoCoords | null;
+    location?: GeoLocation | null;
+    resolving?: boolean;
+}) {
     return (
         <>
             <div className="flex items-center gap-2">
@@ -101,7 +120,17 @@ function SearchResultsControls({
     categories,
     view,
     setView,
-}: any) {
+}: {
+    sortField: 'name' | 'type' | 'distance';
+    sortDirection: 'asc' | 'desc';
+    setSortField: (f: 'name' | 'type' | 'distance') => void;
+    setSortDirection: (d: 'asc' | 'desc') => void;
+    selectedCategories: string[];
+    setSelectedCategories: (c: string[]) => void;
+    categories: string[];
+    view: ViewMode;
+    setView: (v: ViewMode) => void;
+}) {
     return (
         <div className="flex items-center justify-between gap-4 mb-4">
             <div />
@@ -174,7 +203,19 @@ function ResultsListSection({
     loading,
     errorMessage,
     message,
-}: any) {
+}: {
+    visibleResults: RestaurantResult[];
+    view: ViewMode;
+    setSelectedRestaurant: (r: RestaurantResult | null) => void;
+    isBookmarked: (fsqId: string) => boolean;
+    toggleBookmark: (item: RestaurantResult) => void;
+    sentinelRef: React.RefObject<HTMLDivElement | null>;
+    hasMore: boolean;
+    isExhausted: boolean;
+    loading: boolean;
+    errorMessage: string | null;
+    message: string;
+}) {
     if (loading) return <LoadingState />;
     if (errorMessage) return <ErrorState message={errorMessage} />;
 
@@ -215,10 +256,8 @@ export default function ResultsClient() {
         setMessage,
         loading,
         errorMessage,
-        results: allResults,
-        visibleResults: visibleResults,
+        visibleResults,
         hasMore,
-        loadMore,
         sentinelRef,
         selectedCategories,
         setSelectedCategories,
@@ -237,7 +276,6 @@ export default function ResultsClient() {
     } = useResults(coords);
     // note: sorting persistence on user action
 
-    const showResults = !loading && !errorMessage && visibleResults.length > 0;
     const isExhausted = !loading && !errorMessage && !hasMore && visibleResults.length > 0;
 
     return (
@@ -250,7 +288,7 @@ export default function ResultsClient() {
                         onRemoveHistory={removeEntry}
                         onClearHistory={clearHistory}
                         bookmarks={bookmarks}
-                        onSelectBookmark={(bookmarked: any) => setSelectedRestaurant({
+                        onSelectBookmark={(bookmarked: BookmarkedRestaurant) => setSelectedRestaurant({
                             fsqId: bookmarked.fsqId,
                             name: bookmarked.name,
                             address: bookmarked.address,
@@ -264,7 +302,6 @@ export default function ResultsClient() {
                         toggleLocation={toggleLocation}
                         coords={coords}
                         location={location}
-                        locationError={locationError}
                         resolving={resolving}
                     />
                 </div>
