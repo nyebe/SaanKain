@@ -2,11 +2,9 @@
 
 import { useState } from 'react';
 
-import {
-    Filter,
-    MapPin,
-} from 'lucide-react';
+import { Filter } from 'lucide-react';
 
+import LocationToggle from '@/components/buttonGroup/LocationToggle';
 import SortControl from '@/components/buttonGroup/SortControl';
 import ViewModeToggle from '@/components/buttonGroup/ViewModeToggle';
 import SearchForm from '@/components/forms/SearchForm';
@@ -17,7 +15,6 @@ import SearchHistorySheet from '@/components/sheets/SearchHistorySheet';
 import ErrorState from '@/components/states/ErrorState';
 import LoadingState from '@/components/states/LoadingState';
 import NoResultsHero from '@/components/states/NoResultsHero';
-import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -92,22 +89,7 @@ export default function ResultsClient() {
                             onRemove={removeBookmark}
                             onClear={clearBookmarks}
                         />
-                        <Button
-                            type="button"
-                            variant={useLocation ? 'default' : 'outline'}
-                            size="icon"
-                            onClick={toggleLocation}
-                            disabled={resolving}
-                            title={useLocation ? 'Location active — click to disable' : 'Use my location'}
-                            aria-label="Toggle location search"
-                            className="shrink-0"
-                        >
-                            {resolving ? (
-                                <Spinner className="size-4" />
-                            ) : (
-                                <MapPin className="size-4" />
-                            )}
-                        </Button>
+                        <LocationToggle useLocation={useLocation} resolving={resolving} onToggle={toggleLocation} />
                     </div>
 
                     {useLocation && (
