@@ -24,19 +24,24 @@ function writeToStorage(entries: SearchHistoryEntry[]): void {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     } catch {
-        // storage may be full or unavailable — fail silently
     }
 }
 
 export default function useSearchHistory() {
-    const [history, setHistory] = useState<SearchHistoryEntry[]>(() => readFromStorage());
+    const [history, setHistory] = useState<SearchHistoryEntry[]>(() => {
+        if (typeof window === 'undefined') return [];
+        try {
+            return readFromStorage();
+        } catch {
+            return [];
+        }
+    });
 
     const addEntry = useCallback((query: string) => {
         const trimmed = query.trim();
         if (!trimmed) return;
 
         setHistory((prev) => {
-            // remove any existing entry with the same query (dedup — move to top)
             const deduped = prev.filter(
                 (entry) => entry.query.toLowerCase() !== trimmed.toLowerCase()
             );

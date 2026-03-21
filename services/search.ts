@@ -3,7 +3,7 @@ import axios from 'axios';
 import { ExecuteResponse } from '@/types/api';
 
 export async function fetchSearchResults(message: string, ll?: string): Promise<ExecuteResponse> {
-    if (!process.env.EXECUTE_API_CODE) {
+    if (!process.env.NEXT_PUBLIC_EXECUTE_API_CODE) {
         return {
             success: false,
             error: {
@@ -15,7 +15,7 @@ export async function fetchSearchResults(message: string, ll?: string): Promise<
 
     const params = new URLSearchParams({
         message,
-        code: process.env.EXECUTE_API_CODE || '',
+        code: process.env.NEXT_PUBLIC_EXECUTE_API_CODE || '',
     });
 
     if (ll) {

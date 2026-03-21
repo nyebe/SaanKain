@@ -31,37 +31,33 @@ export default function useResults(coords: GeoCoords | null = null) {
     const [results, setResults] = useState<RestaurantResult[]>([]);
     const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
 
-    // UI state moved from ResultsClient
     const [selectedCategories, setSelectedCategories] = useState<string[]>(['all']);
     const categories = Array.from(
         new Set(results.map((r) => r.category).filter(Boolean) as string[])
     ).sort();
 
-    const [view, setView] = useState<ViewMode>(() => {
+    const [view, setView] = useState<ViewMode>('list');
+
+    const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>('name');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+    useEffect(() => {
         try {
             const v = localStorage.getItem('saankain_view') as ViewMode | null;
-            return v ?? 'list';
+            if (v) setView(v);
         } catch {
-            return 'list';
         }
-    });
-
-    const [sortField, setSortField] = useState<'name' | 'type' | 'distance'>(() => {
         try {
             const sf = localStorage.getItem('saankain_sort_field') as 'name' | 'type' | 'distance' | null;
-            return sf ?? 'name';
+            if (sf) setSortField(sf);
         } catch {
-            return 'name';
         }
-    });
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
         try {
             const sd = localStorage.getItem('saankain_sort_direction') as 'asc' | 'desc' | null;
-            return sd ?? 'asc';
+            if (sd) setSortDirection(sd);
         } catch {
-            return 'asc';
         }
-    });
+    }, []);
 
     const sentinelRef = useRef<HTMLDivElement | null>(null);
 

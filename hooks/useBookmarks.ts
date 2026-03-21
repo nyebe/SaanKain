@@ -12,7 +12,6 @@ const STORAGE_KEY = 'saankain_bookmarks';
 const MAX_BOOKMARKS = 20;
 
 function readFromStorage(): BookmarkedRestaurant[] {
-    if (typeof window === 'undefined') return [];
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
         return stored ? (JSON.parse(stored) as BookmarkedRestaurant[]) : [];
@@ -25,12 +24,18 @@ function writeToStorage(entries: BookmarkedRestaurant[]): void {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     } catch {
-        // storage may be full or unavailable — fail silently
     }
 }
 
 export default function useBookmarks() {
-    const [bookmarks, setBookmarks] = useState<BookmarkedRestaurant[]>(() => readFromStorage());
+    const [bookmarks, setBookmarks] = useState<BookmarkedRestaurant[]>(() => {
+        if (typeof window === 'undefined') return [];
+        try {
+            return readFromStorage();
+        } catch {
+            return [];
+        }
+    });
 
     const isBookmarked = useCallback(
         (fsqId: string): boolean => bookmarks.some((entry) => entry.fsqId === fsqId),
