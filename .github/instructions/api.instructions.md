@@ -249,7 +249,6 @@ Example:
   "parsed": {
     "cuisine": "sushi",
     "locationText": "downtown LA",
-    "priceLevel": 1,
     "openNow": true
   },
   "results": []

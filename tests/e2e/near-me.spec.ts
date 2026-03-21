@@ -56,7 +56,6 @@ test('performs search and shows result when location is toggled on', async ({ br
                 parsed: {
                     cuisine: null,
                     locationText: 'me',
-                    priceLevel: null,
                     openNow: false,
                 },
                 results: [

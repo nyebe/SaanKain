@@ -226,7 +226,6 @@ Parsed result:
 {
   "cuisine": "sushi",
   "locationText": "makati",
-  "priceLevel": 1,
   "openNow": true
 }
 ```

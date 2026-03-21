@@ -13,18 +13,6 @@ function computeScore(result: RestaurantResult, parsed: ParsedSearch): number {
         }
     }
 
-    // Price match (+3)
-    if (
-        parsed.priceLevel !== null &&
-        parsed.priceLevel !== undefined &&
-        result.price !== null &&
-        result.price !== undefined
-    ) {
-        if (result.price === parsed.priceLevel) {
-            score += 3;
-        }
-    }
-
     // Open status match (+2)
     if (parsed.openNow === true && result.isOpen === true) {
         score += 2;

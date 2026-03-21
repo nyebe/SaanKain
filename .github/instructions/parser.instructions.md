@@ -35,7 +35,6 @@ into structured search parameters:
   "rawMessage": "Find me a cheap sushi restaurant in downtown Los Angeles that is open now",
   "cuisine": "sushi",
   "locationText": "downtown Los Angeles",
-  "priceLevel": 1,
   "openNow": true,
   "sortBy": "relevance"
 }
@@ -327,7 +326,6 @@ export type ParsedSearch = {
   rawMessage: string
   cuisine?: string
   locationText?: string
-  priceLevel?: 1 | 2 | 3 | 4
   openNow?: boolean
   sortBy?: "relevance" | "rating"
 }
