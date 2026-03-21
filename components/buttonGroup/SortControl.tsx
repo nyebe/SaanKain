@@ -27,9 +27,9 @@ export default function SortControl({ field, direction, onChange, className }: S
     return (
         <div className={cn('inline-flex items-center gap-2', className)} data-slot="sort-control">
             <NativeSelect value={field} onChange={handleFieldChange} className="min-w-36">
-                <option value="name">Name</option>
-                <option value="type">Type</option>
-                <option value="distance">Distance</option>
+                <option value="name" className='dark:bg-black dark:text-white'>Name</option>
+                <option value="type" className='dark:bg-black dark:text-white'>Type</option>
+                <option value="distance" className='dark:bg-black dark:text-white'>Distance</option>
             </NativeSelect>
 
             <Button size="icon" variant="ghost" onClick={toggleDirection} title={`Sort ${direction === 'asc' ? 'ascending' : 'descending'}`}>
