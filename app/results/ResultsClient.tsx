@@ -30,6 +30,181 @@ import { ViewMode } from '@/types/ui';
 
 import useResults from './useResults';
 
+// FunctionButtons
+// SearchResultsControls
+// ResultsList
+
+function FunctionButtons({
+    history,
+    onSelectHistory,
+    onRemoveHistory,
+    onClearHistory,
+    bookmarks,
+    onSelectBookmark,
+    onRemoveBookmark,
+    onClearBookmarks,
+    useLocation,
+    toggleLocation,
+    coords,
+    location,
+    locationError,
+    resolving,
+}: any) {
+    return (
+        <>
+            <div className="flex items-center gap-2">
+                <SearchHistorySheet
+                    history={history}
+                    onSelect={onSelectHistory}
+                    onRemove={onRemoveHistory}
+                    onClear={onClearHistory}
+                />
+                <BookmarksSheet
+                    bookmarks={bookmarks}
+                    onSelect={onSelectBookmark}
+                    onRemove={onRemoveBookmark}
+                    onClear={onClearBookmarks}
+                />
+                <LocationToggle useLocation={useLocation} resolving={resolving} onToggle={toggleLocation} />
+            </div>
+
+            {useLocation && (
+                <div className="mt-2">
+                    <span className="tabular-nums text-xs text-muted-foreground max-w-[100%] truncate block">
+                        {(() => {
+                            const parts = [
+                                location?.barangay,
+                                location?.town,
+                                location?.cityDistrict,
+                                location?.municipality,
+                                location?.city,
+                                location?.region,
+                                location?.country,
+                            ].filter(Boolean) as string[];
+                            if (parts.length > 0) return parts.join(', ');
+                            return coords ? `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}` : '';
+                        })()}
+                    </span>
+                </div>
+            )}
+        </>
+    );
+}
+
+function SearchResultsControls({
+    sortField,
+    sortDirection,
+    setSortField,
+    setSortDirection,
+    selectedCategories,
+    setSelectedCategories,
+    categories,
+    view,
+    setView,
+}: any) {
+    return (
+        <div className="flex items-center justify-between gap-4 mb-4">
+            <div />
+            <div className="flex items-center gap-2">
+                <SortControl
+                    field={sortField}
+                    direction={sortDirection}
+                    onChange={(field, dir) => {
+                        setSortField(field);
+                        setSortDirection(dir);
+                        try { localStorage.setItem('saankain_sort_field', field); localStorage.setItem('saankain_sort_direction', dir); } catch { }
+                    }}
+                />
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <div aria-label="Filter results">
+                            <Filter className="h-4 w-4" />
+                        </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent sideOffset={8} className="min-w-[160px]">
+                        <DropdownMenuCheckboxItem
+                            checked={selectedCategories.includes('all')}
+                            onCheckedChange={(v) => {
+                                if (v) setSelectedCategories(['all']);
+                            }}
+                        >
+                            All
+                        </DropdownMenuCheckboxItem>
+                        {categories.map((c: string) => (
+                            <DropdownMenuCheckboxItem
+                                key={c}
+                                checked={selectedCategories.includes(c)}
+                                onCheckedChange={(v) => {
+                                    setSelectedCategories((prev: string[]) => {
+                                        const next = prev.filter((x) => x !== 'all');
+                                        if (v) {
+                                            return Array.from(new Set([...next, c]));
+                                        }
+                                        const removed = next.filter((x) => x !== c);
+                                        return removed.length === 0 ? ['all'] : removed;
+                                    });
+                                }}
+                            >
+                                {c}
+                            </DropdownMenuCheckboxItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <ViewModeToggle
+                    view={view}
+                    onChange={(v) => {
+                        setView(v as ViewMode);
+                        try { localStorage.setItem('saankain_view', v); } catch { }
+                    }}
+                />
+            </div>
+        </div>
+    );
+}
+
+function ResultsListSection({
+    visibleResults,
+    view,
+    setSelectedRestaurant,
+    isBookmarked,
+    toggleBookmark,
+    sentinelRef,
+    hasMore,
+    isExhausted,
+    loading,
+    errorMessage,
+    message,
+}: any) {
+    if (loading) return <LoadingState />;
+    if (errorMessage) return <ErrorState message={errorMessage} />;
+
+    if (!loading && !errorMessage && visibleResults.length === 0) return <NoResultsHero message={message} />;
+
+    return (
+        <>
+            <ResultsList
+                results={visibleResults}
+                view={view}
+                onSelect={setSelectedRestaurant}
+                isBookmarked={isBookmarked}
+                onBookmark={toggleBookmark}
+            />
+
+            <div ref={sentinelRef} className="h-1" />
+
+            {hasMore && (
+                <div className="flex justify-center py-6">
+                    <Spinner className="size-5 text-muted-foreground" />
+                </div>
+            )}
+
+            {isExhausted && (
+                <p className="text-center text-xs text-muted-foreground py-6">Try a different search!</p>
+            )}
+        </>
+    );
+}
+
 export default function ResultsClient() {
     const { useLocation, toggleLocation, coords, location, locationError, resolving } = useGeoLocation();
     const { bookmarks, isBookmarked, toggleBookmark, removeBookmark, clearBookmarks } = useBookmarks();
@@ -69,48 +244,29 @@ export default function ResultsClient() {
         <main className="p-6">
             <div className="mx-auto max-w-3xl">
                 <div className="mb-6">
-                    <div className="flex items-center gap-2">
-                        <SearchHistorySheet
-                            history={history}
-                            onSelect={selectHistoryEntry}
-                            onRemove={removeEntry}
-                            onClear={clearHistory}
-                        />
-                        <BookmarksSheet
-                            bookmarks={bookmarks}
-                            onSelect={(bookmarked) => setSelectedRestaurant({
-                                fsqId: bookmarked.fsqId,
-                                name: bookmarked.name,
-                                address: bookmarked.address,
-                                locality: bookmarked.locality,
-                                region: bookmarked.region,
-                                category: bookmarked.category,
-                            })}
-                            onRemove={removeBookmark}
-                            onClear={clearBookmarks}
-                        />
-                        <LocationToggle useLocation={useLocation} resolving={resolving} onToggle={toggleLocation} />
-                    </div>
-
-                    {useLocation && (
-                        <div className="mt-2">
-                            <span className="tabular-nums text-xs text-muted-foreground max-w-[100%] truncate block">
-                                {(() => {
-                                    const parts = [
-                                        location?.barangay,
-                                        location?.town,
-                                        location?.cityDistrict,
-                                        location?.municipality,
-                                        location?.city,
-                                        location?.region,
-                                        location?.country,
-                                    ].filter(Boolean) as string[];
-                                    if (parts.length > 0) return parts.join(', ');
-                                    return coords ? `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}` : '';
-                                })()}
-                            </span>
-                        </div>
-                    )}
+                    <FunctionButtons
+                        history={history}
+                        onSelectHistory={selectHistoryEntry}
+                        onRemoveHistory={removeEntry}
+                        onClearHistory={clearHistory}
+                        bookmarks={bookmarks}
+                        onSelectBookmark={(bookmarked: any) => setSelectedRestaurant({
+                            fsqId: bookmarked.fsqId,
+                            name: bookmarked.name,
+                            address: bookmarked.address,
+                            locality: bookmarked.locality,
+                            region: bookmarked.region,
+                            category: bookmarked.category,
+                        })}
+                        onRemoveBookmark={removeBookmark}
+                        onClearBookmarks={clearBookmarks}
+                        useLocation={useLocation}
+                        toggleLocation={toggleLocation}
+                        coords={coords}
+                        location={location}
+                        locationError={locationError}
+                        resolving={resolving}
+                    />
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="flex-1">
@@ -133,96 +289,31 @@ export default function ResultsClient() {
                 )}
 
                 <div className="mt-6">
-                    <div className="flex items-center justify-between gap-4 mb-4">
-                        <div />
-                        <div className="flex items-center gap-2">
-                            <SortControl
-                                field={sortField}
-                                direction={sortDirection}
-                                onChange={(field, dir) => {
-                                    setSortField(field);
-                                    setSortDirection(dir);
-                                    try { localStorage.setItem('saankain_sort_field', field); localStorage.setItem('saankain_sort_direction', dir); } catch { }
-                                }}
-                            />
-                            <DropdownMenu>
-                                <DropdownMenuTrigger>
-                                    <div aria-label="Filter results">
-                                        <Filter className="h-4 w-4" />
-                                    </div>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent sideOffset={8} className="min-w-[160px]">
-                                    <DropdownMenuCheckboxItem
-                                        checked={selectedCategories.includes('all')}
-                                        onCheckedChange={(v) => {
-                                            if (v) setSelectedCategories(['all']);
-                                        }}
-                                    >
-                                        All
-                                    </DropdownMenuCheckboxItem>
-                                    {categories.map((c) => (
-                                        <DropdownMenuCheckboxItem
-                                            key={c}
-                                            checked={selectedCategories.includes(c)}
-                                            onCheckedChange={(v) => {
-                                                setSelectedCategories((prev) => {
-                                                    const next = prev.filter((x) => x !== 'all');
-                                                    if (v) {
-                                                        return Array.from(new Set([...next, c]));
-                                                    }
-                                                    const removed = next.filter((x) => x !== c);
-                                                    return removed.length === 0 ? ['all'] : removed;
-                                                });
-                                            }}
-                                        >
-                                            {c}
-                                        </DropdownMenuCheckboxItem>
-                                    ))}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                            <ViewModeToggle
-                                view={view}
-                                onChange={(v) => {
-                                    setView(v as ViewMode);
-                                    try { localStorage.setItem('saankain_view', v); } catch { }
-                                }}
-                            />
-                        </div>
-                    </div>
+                    <SearchResultsControls
+                        sortField={sortField}
+                        sortDirection={sortDirection}
+                        setSortField={setSortField}
+                        setSortDirection={setSortDirection}
+                        selectedCategories={selectedCategories}
+                        setSelectedCategories={setSelectedCategories}
+                        categories={categories}
+                        view={view}
+                        setView={setView}
+                    />
 
-                    {loading && <LoadingState />}
-                    {errorMessage && <ErrorState message={errorMessage} />}
-
-                    {showResults && (
-                        <>
-
-                            <ResultsList
-                                results={visibleResults}
-                                view={view}
-                                onSelect={setSelectedRestaurant}
-                                isBookmarked={isBookmarked}
-                                onBookmark={toggleBookmark}
-                            />
-
-                            {/* Scroll sentinel — triggers loadMore when visible */}
-                            <div ref={sentinelRef} className="h-1" />
-
-                            {hasMore && (
-                                <div className="flex justify-center py-6">
-                                    <Spinner className="size-5 text-muted-foreground" />
-                                </div>
-                            )}
-
-                            {isExhausted && (
-                                <p className="text-center text-xs text-muted-foreground py-6">
-                                    Try a different search!
-                                </p>
-                            )}
-                        </>
-                    )}
-                    {!loading && !errorMessage && visibleResults.length === 0 && (
-                        <NoResultsHero message={message} />
-                    )}
+                    <ResultsListSection
+                        visibleResults={visibleResults}
+                        view={view}
+                        setSelectedRestaurant={setSelectedRestaurant}
+                        isBookmarked={isBookmarked}
+                        toggleBookmark={toggleBookmark}
+                        sentinelRef={sentinelRef}
+                        hasMore={hasMore}
+                        isExhausted={isExhausted}
+                        loading={loading}
+                        errorMessage={errorMessage}
+                        message={message}
+                    />
                 </div>
             </div>
             <RestaurantLocationModal
