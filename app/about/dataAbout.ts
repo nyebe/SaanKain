@@ -124,4 +124,9 @@ export const practices = [
     { emoji: '💾', label: 'Safe localStorage', desc: 'SSR guard + try/catch on all reads/writes. History capped at 50, bookmarks at 20.' },
     { emoji: '⚙️', label: 'Env-based Configuration', desc: 'All secrets and limits via environment variables — never hardcoded in library code.' },
     { emoji: '🌐', label: 'SEO Metadata', desc: 'Next.js metadata API: title, description, OpenGraph, and keywords defined in layout.' },
+    { emoji: '📲', label: 'Functional Decomposition', desc: 'Breaking down complex functions into smaller, more manageable pieces.' },
+    { emoji: '🗃️', label: '4-File Structure Page', desc: 'Organizing page components into four distinct files for better maintainability.' },
+    { emoji: '📦', label: 'Single Responsibility Principle', desc: 'Each function or class should have only one reason to change.' },
+    { emoji: '🍱', label: 'Separation of Concerns', desc: 'Dividing a program into distinct sections where each section addresses a separate concern.' },
+    { emoji: '🔠', label: 'Naming Conventions', desc: 'Using descriptive and consistent names for variables, functions, and classes.' },
 ];
