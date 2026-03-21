@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: 'SaanKain — Find restaurants near makati open now',
       description: 'Type natural-language queries like "cheap sushi near makati open now" to discover restaurants.',
-      images: ['/app-logo/og.png'],
+      images: ['/app-logo/512x512.png'],
     },
   };
 }

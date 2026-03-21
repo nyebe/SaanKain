@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
         openGraph: {
             title: 'About — SaanKain',
             description: 'About SaanKain — natural-language restaurant discovery prototype.',
-            images: ['/app-logo/og.png'],
+            images: ['/app-logo/512x512.png'],
         },
     };
 }

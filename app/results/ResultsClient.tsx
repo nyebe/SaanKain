@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 
 import { Filter } from 'lucide-react';
 
@@ -35,10 +36,6 @@ import {
 import { ViewMode } from '@/types/ui';
 
 import useResults from './useResults';
-
-// FunctionButtons
-// SearchResultsControls
-// ResultsList
 
 function FunctionButtons({
     history,
@@ -126,7 +123,7 @@ function SearchResultsControls({
     setSortField: (f: 'name' | 'type' | 'distance') => void;
     setSortDirection: (d: 'asc' | 'desc') => void;
     selectedCategories: string[];
-    setSelectedCategories: (c: string[]) => void;
+    setSelectedCategories: Dispatch<SetStateAction<string[]>>;
     categories: string[];
     view: ViewMode;
     setView: (v: ViewMode) => void;
