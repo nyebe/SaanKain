@@ -1,7 +1,10 @@
 "use client"
 
+import type {
+    Dispatch,
+    SetStateAction,
+} from 'react';
 import { useState } from 'react';
-import type { Dispatch, SetStateAction } from 'react';
 
 import { Filter } from 'lucide-react';
 

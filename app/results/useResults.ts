@@ -70,10 +70,13 @@ export default function useResults(coords: GeoCoords | null = null) {
 
     useEffect(() => {
         const msg = searchParams?.get('message');
+        setMessage(msg ?? '');
+
         if (!msg) {
             setResults([]);
             setErrorMessage(null);
             setVisibleCount(PAGE_SIZE);
+            setSelectedCategories(['all']);
             setLoading(false);
             return;
         }
