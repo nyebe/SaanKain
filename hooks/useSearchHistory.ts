@@ -1,8 +1,9 @@
 "use client"
 
 import {
-    useCallback,
-    useState,
+  useCallback,
+  useEffect,
+  useState,
 } from 'react';
 
 import { SearchHistoryEntry } from '@/types/search';
@@ -29,14 +30,21 @@ function writeToStorage(entries: SearchHistoryEntry[]): void {
 }
 
 export default function useSearchHistory() {
-    const [history, setHistory] = useState<SearchHistoryEntry[]>(() => readFromStorage());
+    const [history, setHistory] = useState<SearchHistoryEntry[]>([]);
+
+    useEffect(() => {
+        try {
+            const stored = readFromStorage();
+            setHistory(stored);
+        } catch {
+        }
+    }, []);
 
     const addEntry = useCallback((query: string) => {
         const trimmed = query.trim();
         if (!trimmed) return;
 
         setHistory((prev) => {
-            // remove any existing entry with the same query (dedup — move to top)
             const deduped = prev.filter(
                 (entry) => entry.query.toLowerCase() !== trimmed.toLowerCase()
             );
