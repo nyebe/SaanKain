@@ -12,7 +12,7 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['tests/**/*.test.{ts,tsx}'],
     env: {
-      EXECUTE_API_CODE: 'pioneerdevai',
+      NEXT_PUBLIC_EXECUTE_API_CODE: 'pioneerdevai',
       MAX_MESSAGE_LENGTH: '500',
       FOURSQUARE_API_BASE: 'https://places-api.foursquare.com',
       FOURSQUARE_FIELDS: 'fsq_place_id,name,location,categories,distance,date_closed',

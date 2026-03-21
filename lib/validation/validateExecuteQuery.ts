@@ -23,7 +23,7 @@ export function validateExecuteQuery(
     message: string | null,
     ll: string | null = null
 ): ValidationResult {
-    const validCode = process.env.EXECUTE_API_CODE;
+    const validCode = process.env.NEXT_PUBLIC_EXECUTE_API_CODE;
     const maxLength = parseInt(process.env.MAX_MESSAGE_LENGTH ?? '500', 10);
 
     if (!code || !validCode || code !== validCode) {
