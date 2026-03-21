@@ -2,7 +2,6 @@
 
 import {
     useCallback,
-    useEffect,
     useState,
 } from 'react';
 
@@ -29,14 +28,14 @@ function writeToStorage(entries: BookmarkedRestaurant[]): void {
 }
 
 export default function useBookmarks() {
-    const [bookmarks, setBookmarks] = useState<BookmarkedRestaurant[]>([]);
-
-    useEffect(() => {
+    const [bookmarks, setBookmarks] = useState<BookmarkedRestaurant[]>(() => {
+        if (typeof window === 'undefined') return [];
         try {
-            setBookmarks(readFromStorage());
+            return readFromStorage();
         } catch {
+            return [];
         }
-    }, []);
+    });
 
     const isBookmarked = useCallback(
         (fsqId: string): boolean => bookmarks.some((entry) => entry.fsqId === fsqId),

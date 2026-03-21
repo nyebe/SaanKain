@@ -1,9 +1,8 @@
 "use client"
 
 import {
-  useCallback,
-  useEffect,
-  useState,
+    useCallback,
+    useState,
 } from 'react';
 
 import { SearchHistoryEntry } from '@/types/search';
@@ -25,20 +24,18 @@ function writeToStorage(entries: SearchHistoryEntry[]): void {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     } catch {
-        // storage may be full or unavailable — fail silently
     }
 }
 
 export default function useSearchHistory() {
-    const [history, setHistory] = useState<SearchHistoryEntry[]>([]);
-
-    useEffect(() => {
+    const [history, setHistory] = useState<SearchHistoryEntry[]>(() => {
+        if (typeof window === 'undefined') return [];
         try {
-            const stored = readFromStorage();
-            setHistory(stored);
+            return readFromStorage();
         } catch {
+            return [];
         }
-    }, []);
+    });
 
     const addEntry = useCallback((query: string) => {
         const trimmed = query.trim();
