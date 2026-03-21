@@ -61,7 +61,7 @@ export default function NavBar() {
                                 <div className="pl-4 flex flex-col gap-3">
                                     {navItems.map((n) => (
                                         <SheetClose key={n.href}>
-                                            <Link href={n.href} className="block">{n.label}</Link>
+                                            <Link href={n.href} className="block text-start">{n.label}</Link>
                                         </SheetClose>
                                     ))}
                                 </div>
@@ -69,9 +69,6 @@ export default function NavBar() {
                                 <SheetFooter>
                                     <div className="flex items-center justify-between w-full">
                                         <ThemeToggle />
-                                        <SheetClose>
-                                            <Link href="/" className="px-3 py-1 rounded-md bg-primary text-primary-foreground text-sm">Search</Link>
-                                        </SheetClose>
                                     </div>
                                 </SheetFooter>
                             </SheetContent>

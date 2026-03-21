@@ -85,3 +85,9 @@ export interface BookmarksSheetProps {
     onRemove: (fsqId: string) => void;
     onClear: () => void;
 }
+
+export interface LocationToggleProps {
+    useLocation?: boolean;
+    resolving?: boolean;
+    onToggle: () => void;
+}

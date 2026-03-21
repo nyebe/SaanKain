@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from 'react';
+import { ChangeEvent } from 'react';
 
 import {
     ArrowDown,
@@ -16,7 +16,7 @@ import {
 } from '@/types/ui';
 
 export default function SortControl({ field, direction, onChange, className }: SortControlProps) {
-    function handleFieldChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    function handleFieldChange(e: ChangeEvent<HTMLSelectElement>) {
         onChange(e.target.value as SortField, direction);
     }
 
@@ -26,7 +26,7 @@ export default function SortControl({ field, direction, onChange, className }: S
 
     return (
         <div className={cn('inline-flex items-center gap-2', className)} data-slot="sort-control">
-            <NativeSelect value={field} onChange={handleFieldChange} className="min-w-[9rem]">
+            <NativeSelect value={field} onChange={handleFieldChange} className="min-w-36">
                 <option value="name">Name</option>
                 <option value="type">Type</option>
                 <option value="distance">Distance</option>

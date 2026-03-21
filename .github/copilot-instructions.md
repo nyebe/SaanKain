@@ -225,7 +225,11 @@ Hooks may call **services**, but not backend modules.
 
 Notes:
 - The `/hooks` directory is reserved for reusable, shared hooks only (e.g., `useIsMobile`, `useAuth`).
-- Page-specific hooks must be colocated with the page using the 3-file structure (`use<PageName>.ts` inside the page folder under `/app`).
+- Page-specific hooks must be colocated with the page using the 4-file structure (`use<PageName>.ts` inside the page folder under `/app`).
+  - page.tsx (UI) - SSR or CSR React component
+  - use<PageName>.ts - page-specific hook for state and logic
+  - data<PageName>.ts - page-specific data helpers that call services and static data
+  - <PageName>Client.ts - client-only module for client-specific logic (e.g., localStorage, window events)
 - Do not place page-specific logic or types in `/hooks` — keep those in the page folder.
 
 ---
