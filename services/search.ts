@@ -3,9 +3,19 @@ import axios from 'axios';
 import { ExecuteResponse } from '@/types/api';
 
 export async function fetchSearchResults(message: string, ll?: string): Promise<ExecuteResponse> {
+    if (!process.env.EXECUTE_API_CODE) {
+        return {
+            success: false,
+            error: {
+                code: 'CONFIGURATION_ERROR',
+                message: 'Search service is not configured properly. Please contact support.',
+            },
+        };
+    }
+
     const params = new URLSearchParams({
         message,
-        code: 'pioneerdevai',
+        code: process.env.EXECUTE_API_CODE || '',
     });
 
     if (ll) {
