@@ -15,14 +15,6 @@ function findCuisine(message: string): string | null {
     return null;
 }
 
-function findPriceLevel(message: string): number | null {
-    for (const key of Object.keys(PRICE_KEYWORDS)) {
-        const re = new RegExp(`\\b${key}\\b`, 'i');
-        if (re.test(message)) return PRICE_KEYWORDS[key];
-    }
-    return null;
-}
-
 function findOpenNow(message: string): boolean {
     for (const p of OPEN_NOW_PATTERNS) {
         if (p.test(message)) return true;
@@ -50,14 +42,12 @@ function parseMessageFallback(raw: string): ParsedSearch {
     const message = (raw || '').toLowerCase();
 
     const cuisine = findCuisine(message);
-    const priceLevel = findPriceLevel(message);
     const openNow = findOpenNow(message);
     const locationText = findLocation(raw);
 
     return {
         cuisine: cuisine ?? null,
         locationText: locationText ?? null,
-        priceLevel: priceLevel ?? null,
         openNow,
     };
 }

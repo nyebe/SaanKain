@@ -110,7 +110,6 @@ Successful responses follow this structure.
   "parsed": {
     "cuisine": "sushi",
     "locationText": "downtown LA",
-    "priceLevel": 1,
     "openNow": true,
     "sortBy": "relevance"
   },
@@ -130,7 +129,6 @@ Example:
 {
   "cuisine": "sushi",
   "locationText": "downtown LA",
-  "priceLevel": 1,
   "openNow": true,
   "sortBy": "relevance"
 }
@@ -145,7 +143,6 @@ type ParsedSearch = {
   rawMessage: string
   cuisine?: string
   locationText?: string
-  priceLevel?: 1 | 2 | 3 | 4
   openNow?: boolean
   sortBy?: "relevance" | "rating"
 }
@@ -206,7 +203,6 @@ Example response:
   "parsed": {
     "cuisine": "sushi",
     "locationText": "downtown LA",
-    "priceLevel": 1,
     "openNow": true
   },
   "results": [

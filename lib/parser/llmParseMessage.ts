@@ -6,7 +6,6 @@ import { ParsedSearch } from '@/types/search';
 const parsedSearchSchema = z.object({
     cuisine: z.string().trim().min(1).nullable().optional().transform((v) => v ?? null),
     locationText: z.string().trim().min(1).nullable().optional().transform((v) => v ?? null),
-    priceLevel: z.number().int().min(1).max(4).nullable().optional().transform((v) => v ?? null),
     openNow: z.boolean().optional().default(false),
 });
 
@@ -21,11 +20,10 @@ export async function llmParseMessage(raw: string): Promise<ParsedSearch> {
     const client = new Groq({ apiKey });
 
     const prompt = `You extract restaurant search filters from user text.
-Return ONLY a JSON object with keys: cuisine (string|null), locationText (string|null), priceLevel (1-4|null), openNow (boolean).
+Return ONLY a JSON object with keys: cuisine (string|null), locationText (string|null), openNow (boolean).
 Rules:
 - cuisine: cuisine or food style mentioned (e.g., "ramen"), else null.
 - locationText: place text after "near" or obvious city/area (keep short). For Metro Manila districts, include the city (e.g., "Sampaloc, Manila"; "BGC, Taguig"). If no clear place, null.
-- priceLevel: map words ["cheap"/"inexpensive"/"budget"->1, "moderate"/"mid"->2, "expensive"/"pricey"/"premium"->3, "luxury"/"fine dining"->4]; else null.
 - openNow: true if user asks for open now/currently open, else false.
 If unsure, prefer null/false. Respond with JSON only, no prose.`;
 
@@ -64,7 +62,6 @@ If unsure, prefer null/false. Respond with JSON only, no prose.`;
     return {
         cuisine: data.cuisine ?? null,
         locationText: data.locationText ?? null,
-        priceLevel: data.priceLevel ?? null,
         openNow: data.openNow ?? false,
     };
 }

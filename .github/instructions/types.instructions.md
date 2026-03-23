@@ -133,7 +133,6 @@ export type ParsedSearch = {
   rawMessage: string
   cuisine?: string
   locationText?: string
-  priceLevel?: 1 | 2 | 3 | 4
   openNow?: boolean
   sortBy?: "relevance" | "rating"
 }

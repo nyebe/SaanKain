@@ -103,7 +103,6 @@ Example:
   rawMessage: "cheap sushi near makati open now",
   cuisine: "sushi",
   locationText: "makati",
-  priceLevel: 1,
   openNow: true,
   sortBy: "relevance"
 }
@@ -180,26 +179,6 @@ substring-safe
 ```
 
 Avoid overly complex fuzzy matching unless explicitly requested.
-
----
-
-# Price Matching
-
-If `parsed.priceLevel` exists, rank higher when:
-
-```text
-result.price === parsed.priceLevel
-```
-
-Partial relaxation may be added later, but version 1 should prefer exact match.
-
-If price is missing:
-
-```text
-do not penalize heavily
-```
-
-Missing price should not destroy otherwise relevant results.
 
 ---
 
@@ -328,7 +307,6 @@ Parsed object:
 {
   cuisine: "sushi",
   locationText: "downtown Los Angeles",
-  priceLevel: 1,
   openNow: true,
   sortBy: "rating"
 }
@@ -410,24 +388,7 @@ Expected:
 
 ---
 
-### Case 2 — Price preference
-
-Input:
-
-* sushi place price 1
-* sushi place price 3
-
-Parsed:
-
-* priceLevel = 1
-
-Expected:
-
-* price 1 ranks first
-
----
-
-### Case 3 — Rating preference
+### Case 2 — Rating preference
 
 Input:
 
